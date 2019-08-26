@@ -13,6 +13,7 @@ public class EntityRef extends Reference {
     private final String attributeName;
     private final String validation;
     private final Relationship relationship;
+    private final boolean unidirectional;
 
     public EntityRef(Entity owner,
             Entity target,
@@ -26,7 +27,8 @@ public class EntityRef extends Reference {
         String v = getValidation();
         if (v == null) {
             this.validation = null;
-            this.relationship = Relationship.ManyToOne;
+            this.unidirectional = false;
+            this.relationship = Relationship.OneToMany;
         } else {
             Relationship rel = Relationship.ManyToOne;
             for (Relationship r : Relationship.values()) {
@@ -35,6 +37,12 @@ public class EntityRef extends Reference {
                     rel = r;
                     break;
                 }
+            }
+            if (v.contains("unidirectional")) {
+                v = v.replace("unidirectional", "");
+                this.unidirectional = true;
+            } else {
+                this.unidirectional = false;
             }
             this.validation = v;
             this.relationship = rel;
@@ -53,13 +61,28 @@ public class EntityRef extends Reference {
                     .append(System.lineSeparator());
         }
 
-        buf
+        if (unidirectional) {
+            buf
                 .append('\t')
                 .append(owner.getName())
                 .append("{")
                 .append(attributeName)
                 .append("} to ")
                 .append(target.getName());
+        }
+
+        if (!unidirectional) {
+            buf
+                .append('\t')
+                .append(target.getName())
+                .append("{")
+                .append(owner.getName().toLowerCase())
+                .append("} to ")
+                .append(owner.getName())
+                .append("{")
+                .append(attributeName)
+                .append("}");
+        }
 
         if (validation != null) {
             buf.append(' ').append(validation);

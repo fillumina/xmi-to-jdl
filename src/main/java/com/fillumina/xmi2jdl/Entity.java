@@ -38,6 +38,11 @@ public class Entity implements Comparable<Entity> {
     }
 
     public void appendEntity(Appendable buf) throws IOException {
+        // User is provided by JHipster
+        if ("User".equals(name) || "Authority".equals(name)) {
+            return;
+        }
+
         if (comment != null) {
             buf.append("/** ").append(comment).append(" */")
                     .append(System.lineSeparator());
