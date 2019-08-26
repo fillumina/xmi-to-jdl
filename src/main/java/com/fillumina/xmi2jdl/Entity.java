@@ -38,7 +38,7 @@ public class Entity implements Comparable<Entity> {
     }
 
     public void appendEntity(Appendable buf) throws IOException {
-        // User is provided by JHipster
+        // User & Authority is provided by JHipster
         if ("User".equals(name) || "Authority".equals(name)) {
             return;
         }
@@ -68,6 +68,11 @@ public class Entity implements Comparable<Entity> {
     }
 
     public boolean hasRelationships(Relationship rel) {
+        // User & Authority is provided by JHipster
+        if ("User".equals(name) || "Authority".equals(name)) {
+            return false;
+        }
+
         for (Reference r : references) {
             if (r instanceof EntityRef &&
                     ((EntityRef)r).getRelationship().equals(rel)) {
@@ -79,6 +84,11 @@ public class Entity implements Comparable<Entity> {
 
     public void appendRelationship(Relationship rel , Appendable buf)
             throws IOException {
+        // User & Authority is provided by JHipster
+        if ("User".equals(name) || "Authority".equals(name)) {
+            return;
+        }
+
         boolean output = false;
         for (Reference r : references) {
             if (r instanceof EntityRef &&
@@ -93,6 +103,11 @@ public class Entity implements Comparable<Entity> {
     }
 
     private boolean hasDataTypeAttributes() {
+        // User & Authority is provided by JHipster
+        if ("User".equals(name) || "Authority".equals(name)) {
+            return false;
+        }
+
         for (Reference r : references) {
             if (r instanceof DataTypeRef) {
                 return true;
