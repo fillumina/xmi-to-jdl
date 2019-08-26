@@ -48,15 +48,30 @@ public class ReadXMLFileUsingSaxparser extends DefaultHandler {
                 .append(System.lineSeparator())
                 .append(System.lineSeparator());
 
-        buf.append("relationship ManyToOne {")
-                .append(System.lineSeparator())
-                .append(System.lineSeparator());
+        for (Relationship relationship : Relationship.values()) {
+            boolean relationshipPresent = false;
+            for (Entity e : entitySortedList) {
+                if (e.hasRelationships(relationship)) {
+                    relationshipPresent = true;
+                    break;
+                }
+            }
 
-        for (Entity e : entitySortedList) {
-            e.appendRelationship(buf);
+            if (relationshipPresent) {
+                buf.append("relationship ").append(relationship.name())
+                        .append(" {")
+                        .append(System.lineSeparator())
+                        .append(System.lineSeparator());
+
+                for (Entity e : entitySortedList) {
+                    e.appendRelationship(relationship, buf);
+                }
+
+                buf.append("}")
+                        .append(System.lineSeparator())
+                        .append(System.lineSeparator());
+            }
         }
-
-        buf.append("}").append(System.lineSeparator());
 
 
         buf.append(System.lineSeparator()).append("// ERRORS")

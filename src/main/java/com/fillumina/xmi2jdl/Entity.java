@@ -62,10 +62,22 @@ public class Entity implements Comparable<Entity> {
         buf.append(System.lineSeparator()).append(System.lineSeparator());
     }
 
-    public void appendRelationship(Appendable buf) throws IOException {
+    public boolean hasRelationships(Relationship rel) {
+        for (Reference r : references) {
+            if (r instanceof EntityRef &&
+                    ((EntityRef)r).getRelationship().equals(rel)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void appendRelationship(Relationship rel , Appendable buf)
+            throws IOException {
         boolean output = false;
         for (Reference r : references) {
-            if (r instanceof EntityRef) {
+            if (r instanceof EntityRef &&
+                    ((EntityRef)r).getRelationship().equals(rel)) {
                 r.append(buf);
                 output = true;
             }
