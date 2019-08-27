@@ -1,5 +1,6 @@
-package com.fillumina.xmi2jdl;
+package com.filluimina.xmi2jdl;
 
+import com.fillumina.xmi2jdl.App;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;

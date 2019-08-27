@@ -76,7 +76,8 @@ public class EntityRef extends Reference {
                 .append('\t')
                 .append(target.getName())
                 .append("{")
-                .append(owner.getName().toLowerCase())
+                .append(Character.toLowerCase(owner.getName().charAt(0)) +
+                        owner.getName().substring(1))
                 .append("} to ")
                 .append(owner.getName())
                 .append("{")
