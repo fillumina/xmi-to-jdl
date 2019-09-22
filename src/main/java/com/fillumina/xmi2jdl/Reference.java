@@ -27,7 +27,7 @@ public abstract class Reference {
         return comment;
     }
 
-    public String getValidation() {
+    public final String getValidation() {
         return validation;
     }
 

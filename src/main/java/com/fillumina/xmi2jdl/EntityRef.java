@@ -62,27 +62,49 @@ public class EntityRef extends Reference {
         }
 
         if (unidirectional) {
+            String targetDisplayField = target.getDisplayField();
+
             buf
                 .append('\t')
                 .append(owner.getName())
                 .append("{")
-                .append(attributeName)
+                .append(attributeName);
+
+            if (targetDisplayField != null) {
+                buf.append('(').append(targetDisplayField).append(')');
+            }
+
+            buf
                 .append("} to ")
                 .append(target.getName());
         }
 
         if (!unidirectional) {
+            String targetDisplayField = target.getDisplayField();
+            String ownerDisplayField = owner.getDisplayField();
+
             buf
                 .append('\t')
                 .append(target.getName())
                 .append("{")
                 .append(Character.toLowerCase(owner.getName().charAt(0)) +
-                        owner.getName().substring(1))
+                        owner.getName().substring(1));
+
+            if (ownerDisplayField != null) {
+                buf.append('(').append(ownerDisplayField).append(')');
+            }
+
+            buf
                 .append("} to ")
                 .append(owner.getName())
                 .append("{")
-                .append(attributeName)
-                .append("}");
+                .append(attributeName);
+
+            if (targetDisplayField != null) {
+                buf.append('(').append(targetDisplayField).append(')');
+            }
+
+            buf.append("}");
         }
 
         if (validation != null) {

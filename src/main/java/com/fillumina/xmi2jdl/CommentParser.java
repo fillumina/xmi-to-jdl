@@ -1,12 +1,6 @@
 package com.fillumina.xmi2jdl;
 
 /**
- * Reads a XMI file exported by Umbrello https://umbrello.kde.org/
- *
- * Relationships are ManyToOne by default and the owner is the entity
- * containing the actual field (the FK on the db).
- *
- * Field validation can be added within curly brackets {} in comments.
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
@@ -22,7 +16,8 @@ public class CommentParser {
             int start = str.indexOf('{');
             if (start != -1) {
                 int end = str.indexOf('}', start);
-                String c = (str.substring(0, start) + str.substring(end+1)).trim();
+                String c = (str.substring(0, start).trim() + " " +
+                        str.substring(end+1).trim()).trim();
                 if (c.isBlank()) {
                     comment = null;
                 } else {
@@ -33,6 +28,9 @@ public class CommentParser {
                 comment = str;
                 validation = null;
             }
+        }
+        if (comment != null && comment.contains("{")) {
+            throw new RuntimeException("comment contains two validations: " + str);
         }
     }
 

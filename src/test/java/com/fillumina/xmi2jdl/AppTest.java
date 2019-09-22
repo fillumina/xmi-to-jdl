@@ -1,6 +1,5 @@
-package com.filluimina.xmi2jdl;
+package com.fillumina.xmi2jdl;
 
-import com.fillumina.xmi2jdl.App;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
@@ -15,7 +14,7 @@ public class AppTest {
             ParserConfigurationException {
 
         App.main(new String[]{
-            "/home/fra/Development/Work/Emporia/extended_class_diagram_final_6.xmi"});
+            "/home/fra/Development/Work/Emporia/extended_class_diagram_final_8.xmi"});
 
     }
 

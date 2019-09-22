@@ -19,7 +19,7 @@ public class Entity implements Comparable<Entity> {
     private final boolean skipClient;
     private final List<Reference> references = new ArrayList<>();
 
-    public Entity(String name, String id, String comment) {
+    public Entity(String id, String name, String comment) {
         this.name = name;
         this.id = id;
         CommentParser parser = new CommentParser(comment);
@@ -140,6 +140,15 @@ public class Entity implements Comparable<Entity> {
             }
         }
         return false;
+    }
+
+    public String getDisplayField() {
+        for (Reference r : references) {
+            if (r instanceof DataTypeRef && ((DataTypeRef)r).isDisplay()) {
+                return r.getName();
+            }
+        }
+        return null;
     }
 
     @Override

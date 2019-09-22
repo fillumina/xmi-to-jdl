@@ -100,7 +100,7 @@ public class ReadXMLFileUsingSaxparser extends DefaultHandler {
                         DataType dataType = new DataType(id, name, null);
                         dataTypes.put(id, dataType);
                     } else {
-                        currentEntity = new Entity(name, id, comment);
+                        currentEntity = new Entity(id, name, comment);
                         entities.put(id, currentEntity);
                     }
                     break;

@@ -9,10 +9,24 @@ import java.io.IOException;
 public class DataTypeRef extends Reference {
 
     private final DataType dataType;
+    private final String validation;
+    private final boolean display;
 
     public DataTypeRef(DataType dataType, String name, String comment) {
         super(name, comment);
         this.dataType = dataType;
+        String v = getValidation();
+        if (v != null && v.contains("display")) {
+            this.display = true;
+            this.validation = v.replace("display", "");
+        } else {
+            this.display = false;
+            this.validation = v;
+        }
+    }
+
+    public boolean isDisplay() {
+        return display;
     }
 
     @Override
@@ -29,7 +43,6 @@ public class DataTypeRef extends Reference {
                 .append(" ")
                 .append(dataType.toString());
 
-        String validation = getValidation();
         if (validation != null) {
             buf.append(" ").append(validation);
         }
