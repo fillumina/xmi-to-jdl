@@ -22,29 +22,19 @@ import org.xml.sax.SAXException;
  * <li><b>Entity</b><br>
  * One of:
  * <ul>
- * <li><code>ManyToOne</code> (default)
+ * <li><code>ManyToOne</code> (default if omitted)
  * <li><code>OneToMany</code>
  * <li><code>ManyToMany</code>
- * <li><code>OneToOne</code>
+ * <li><code>OneToOne</code> eventually followed by <code>mapid</code>
  * </ul>
  * eventually with <code>unidirectional</code> added;
  * <p>
  * Any of the following (no parameters):
  * <ul>
- * <li>skipClient 
- * <li>skipServer
- * <li>noFluentMethod
- * <li>filter
- * </ul>
- * Any of the following (one parameter):
- * <ul>
- * <li>dto (mapstruct)
- * <li>service (serviceClass, serviceImpl)
- * <li>paginate (pager, pagination, infinite-scroll)
- * <li>search (elasticsearch)
- * <li>microservice (custom value)
- * <li>angularSuffix (custom value)
- * <li>clientRootFolder (custom value)
+ * <li><code>skipClient</code> doesn't build the client
+ * <li><code>skipServer</code> doesn't build the server
+ * <li><code>filter</code> adds advanced search filters to the server API
+ * <li><code>pagination</code> or <code>infinite-scroll</code> pagination types
  * </ul>
  * <li><b>Attribute</b><br>
  * <ul>
@@ -66,19 +56,11 @@ public class App {
 
     public static void main(String[] args) throws IOException, SAXException,
             ParserConfigurationException {
-
-        SAXParserFactory parserfactory = SAXParserFactory.newInstance();
-
-        SAXParser parser = parserfactory.newSAXParser();
-
-        ReadXMLFileUsingSaxparser handler = new ReadXMLFileUsingSaxparser();
-
         String filename = args[0];
         if (filename == null) {
             System.err.println("filename argument missing!");
         } else {
-            parser.parse(filename, handler);
-            handler.print(System.out);
+            new Parser().parseFilename(filename).writeToAppendable(System.out);
         }
     }
 

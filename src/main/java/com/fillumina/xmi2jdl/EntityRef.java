@@ -77,9 +77,9 @@ public class EntityRef extends Reference {
             buf
                 .append("} to ")
                 .append(target.getName());
-        }
+            
+        } else {
 
-        if (!unidirectional) {
             String targetDisplayField = target.getDisplayField();
             String ownerDisplayField = owner.getDisplayField();
 
