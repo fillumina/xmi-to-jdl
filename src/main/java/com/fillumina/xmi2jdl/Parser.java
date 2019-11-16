@@ -64,6 +64,7 @@ public class Parser {
     public Parser parseFilename(String uri) {
         try {
             createParser().parse(uri, hb);
+            hb.consolidate();
         } catch (SAXException | IOException ex) {
             throw new RuntimeException(ex);
         }

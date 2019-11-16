@@ -14,7 +14,8 @@ public class AppTest {
             ParserConfigurationException {
 
         App.main(new String[]{
-            "/home/fra/Development/Work/Emporia/extended_class_diagram_final_8.xmi"});
+            "/home/fra/Development/Work/Emporia/ClassDiagram/extended_class_diagram_final_24.xmi"
+        });
 
     }
 

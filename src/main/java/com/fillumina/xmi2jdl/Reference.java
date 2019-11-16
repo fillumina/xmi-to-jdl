@@ -14,9 +14,14 @@ public abstract class Reference {
 
     public Reference(String name, String comment) {
         this.name = name;
-        CommentParser parser = new CommentParser(comment);
-        this.comment = parser.getComment();
-        this.validation = parser.getValidation();
+        try {
+            CommentParser parser = new CommentParser(comment);
+            this.comment = parser.getComment();
+            this.validation = parser.getValidation();
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Exception found on " + name + " comment: " + comment, e);
+        }
     }
 
     public String getName() {

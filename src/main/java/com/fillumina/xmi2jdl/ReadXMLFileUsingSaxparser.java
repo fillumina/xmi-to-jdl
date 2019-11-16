@@ -25,8 +25,14 @@ public class ReadXMLFileUsingSaxparser extends DefaultHandler {
     private Entity currentEntity;
     private Enumeration currentEnumeration;
 
+    public void consolidate() {
+        entities.values().forEach(e -> {
+            e.resolveReferences(dataTypes, entities, errors);
+        });
+    }
+    
     public void print(Appendable buf) throws IOException {
-        buf.append("// ENUMERATIONS ")
+        buf.append("// " + enumerations.size() + " ENUMERATIONS ")
                 .append(System.lineSeparator())
                 .append(System.lineSeparator());
 
@@ -34,7 +40,7 @@ public class ReadXMLFileUsingSaxparser extends DefaultHandler {
             e.appendEnumeration(buf);
         }
 
-        buf.append("// ENTITIES ")
+        buf.append("// " + entities.size() + " ENTITIES ")
                 .append(System.lineSeparator())
                 .append(System.lineSeparator());
 
@@ -89,75 +95,73 @@ public class ReadXMLFileUsingSaxparser extends DefaultHandler {
             String qName,
             Attributes attributes) throws SAXException {
 
-        switch (qName) {
-            case "UML:Class":
-                {
-                    String name = attributes.getValue("name");
-                    String id = attributes.getValue("xmi.id");
-                    String comment = attributes.getValue("comment");
-                    String namespace = attributes.getValue("namespace");
-                    if ("Datatypes".equals(namespace)) {
+        try {
+            switch (qName) {
+                case "UML:Class":
+                    {
+                        String name = attributes.getValue("name");
+                        String id = attributes.getValue("xmi.id");
+                        String comment = attributes.getValue("comment");
+                        String namespace = attributes.getValue("namespace");
+                        if ("Datatypes".equals(namespace)) {
+                            DataType dataType = new DataType(id, name, null);
+                            dataTypes.put(id, dataType);
+                        } else {
+                            currentEnumeration = null;
+                            currentEntity = new Entity(id, name, comment);
+                            entities.put(id, currentEntity);
+                        }
+                        break;
+                    }
+                case "UML:DataType":
+                    {
+                        String name = attributes.getValue("name");
+                        String id = attributes.getValue("xmi.id");
                         DataType dataType = new DataType(id, name, null);
                         dataTypes.put(id, dataType);
-                    } else {
-                        currentEntity = new Entity(id, name, comment);
-                        entities.put(id, currentEntity);
+                        break;
                     }
-                    break;
-                }
-            case "UML:DataType":
-                {
-                    String name = attributes.getValue("name");
-                    String id = attributes.getValue("xmi.id");
-                    DataType dataType = new DataType(id, name, null);
-                    dataTypes.put(id, dataType);
-                    break;
-                }
-            case "UML:Attribute":
-                {
-                    String attributeName = attributes.getValue("name");
-                    String type = attributes.getValue("type");
-                    String comment = attributes.getValue("comment");
-                    DataType dataType = dataTypes.get(type);
-                    if (dataType != null) {
-                        if ("undef".equals(dataType.getName())) {
-                            errors.add("for entity " + currentEntity.getName() +
-                                    " attribute " + attributeName +
-                                    " is of undefined type!");
-                        }
-                        DataTypeRef dataTypeRef =
-                                new DataTypeRef(dataType, attributeName, comment);
-                        currentEntity.addReference(dataTypeRef);
-                    } else {
-                        Entity entity = entities.get(type);
-                        if (entity != null) {
-                            EntityRef entityRef =
-                                    new EntityRef(currentEntity, entity,
-                                            attributeName, comment);
-                            currentEntity.addReference(entityRef);
-                        }
+                case "UML:Attribute":
+                    {
+                        String attributeName = attributes.getValue("name");
+                        String type = attributes.getValue("type");
+                        String comment = attributes.getValue("comment");
+
+                        currentEntity.addAttribute(new Attribute(
+                                attributeName, type, comment));
+                        
+                        break;
                     }
+                case "UML:Enumeration":
+                    {
+                        String name = attributes.getValue("name");
+                        String id = attributes.getValue("xmi.id");
+                        String comment = attributes.getValue("comment");
+                        Enumeration enumeration = new Enumeration(name, id, comment);
+                        enumerations.put(id, enumeration);
+                        dataTypes.put(id, enumeration);
+                        currentEntity = null;
+                        currentEnumeration = enumeration;
+                        break;
+                    }
+                case "UML:EnumerationLiteral":
+                    {
+                        String name = attributes.getValue("name");
+                        currentEnumeration.addLiteral(name);
+                        break;
+                    }
+                default:
                     break;
-                }
-            case "UML:Enumeration":
-                {
-                    String name = attributes.getValue("name");
-                    String id = attributes.getValue("xmi.id");
-                    String comment = attributes.getValue("comment");
-                    Enumeration enumeration = new Enumeration(name, id, comment);
-                    enumerations.put(id, enumeration);
-                    dataTypes.put(id, enumeration);
-                    currentEnumeration = enumeration;
-                    break;
-                }
-            case "UML:EnumerationLiteral":
-                {
-                    String name = attributes.getValue("name");
-                    currentEnumeration.addLiteral(name);
-                    break;
-                }
-            default:
-                break;
+            }
+        } catch (Exception e) {
+            if (currentEntity != null) {
+                throw new RuntimeException(
+                    "Exception in entity " + this.currentEntity.getName(), e);
+            } else {
+                throw new RuntimeException(
+                    "Exception in enumeration " + this.currentEnumeration.getName(), 
+                        e);
+            }
         }
     }
 
