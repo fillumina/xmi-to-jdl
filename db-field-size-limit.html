@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DB FIELDS SIZE</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <a href="https://www.geekslop.com/2016/recommended-data-length-limits-common-database-programming-fields">
+            Here are the recommended maximum data-length limits for common database and programming fields
+        </a>
+        
+<p>When creating a database, programmers typically stop and scratch their heads when deciding on a maximum data length for the field.&nbsp; Similarly, hackers fuzzing a field may wonder how many characters should be allocated to the target.&nbsp; Although there are no definitive standards, we can come close using governmental standards, ISO recommendations, and database best practices based on maximum known values.&nbsp; Below are common database fields along with their maximum recommended allowable length and data type.</p>
+<table style="height: 782px;" width="713" cellspacing="0" cellpadding="2" border="0"><tbody><tr><td width="131" valign="top"><strong>Field</strong></td>
+<td width="190" valign="top"><strong>Max length</strong></td>
+<td width="227" valign="top"><strong>Notes</strong></td>
+</tr><tr><td width="132" valign="top">First name</td>
+<td width="189" valign="top">35 chars (US), 50 (other)</td>
+<td width="226" valign="top"></td>
+</tr><tr><td width="133" valign="top">Last name</td>
+<td width="189" valign="top">35 chars (US), 50 (other)</td>
+<td width="226" valign="top"></td>
+</tr><tr><td width="134" valign="top">Display name</td>
+<td width="189" valign="top">70 chars (US) 100 (other)</td>
+<td width="225" valign="top"></td>
+</tr><tr><td width="134" valign="top">Street address</td>
+<td width="189" valign="top">35 chars (US) 100 (other)</td>
+<td width="225" valign="top">The longest street name in the United States is 34 characters long.&nbsp; The longest in the world (in New Zealand) is 92 letters long.</td>
+</tr><tr><td width="134" valign="top">Town</td>
+<td width="189" valign="top">25 chars (US) 60 (other)</td>
+<td width="225" valign="top"></td>
+</tr><tr><td width="134" valign="top">State</td>
+<td width="189" valign="top">15 chars (US) 50 (other)</td>
+<td width="225" valign="top"></td>
+</tr><tr><td width="134" valign="top">Country name</td>
+<td width="189" valign="top">55 chars</td>
+<td width="225" valign="top">&nbsp;Currently the longest country name in the world is 53 characters long</td>
+</tr><tr><td width="134" valign="top">Postal code</td>
+<td width="189" valign="top">9 chars</td>
+<td width="225" valign="top"></td>
+</tr><tr><td width="134" valign="top">Monetary amounts</td>
+<td width="189" valign="top">16 chars</td>
+<td width="225" valign="top">Use common sense here, a smaller field size would likely work</td>
+</tr><tr><td width="134" valign="top">Dates</td>
+<td width="189" valign="top">10 chars</td>
+<td width="225" valign="top">CCYY-MM-DD</td>
+</tr><tr><td width="134" valign="top">Email address</td>
+<td width="189" valign="top">254 chars</td>
+<td width="225" valign="top">&nbsp;According to spec with clarification from IETF RFC Errata in 2010</td>
+</tr><tr><td width="134" valign="top">Phone number</td>
+<td width="189" valign="top">15 chars</td>
+<td width="225" valign="top">According to ITU-T</td>
+</tr><tr><td width="134" valign="top">Phone number extension</td>
+<td width="189" valign="top">11 chars</td>
+<td width="225" valign="top"></td>
+</tr><tr><td width="134" valign="top">Credit card number</td>
+<td width="189" valign="top">19 digits</td>
+<td width="225" valign="top">Most are 16 digits</td>
+</tr><tr><td width="134" valign="top">CVV field</td>
+<td width="189" valign="top">4 digits</td>
+<td width="225" valign="top">Some are only 3 digits</td>
+</tr><tr><td width="134" valign="top">IP address</td>
+<td width="189" valign="top">12 digits</td>
+<td width="225" valign="top"></td>
+</tr><tr><td width="134" valign="top">Company name</td>
+<td width="189" valign="top">100 chars</td>
+<td width="225" valign="top">Highly variable but the longest name in the US is believed to be a law firm with a 92 character name.</td>
+</tr><tr><td width="134" valign="top">Longitude</td>
+<td width="189" valign="top">9 (with 6 decimal places)</td>
+<td width="225" valign="top">6 decimal positions for .1m resolution or 5 decimal positions for 1m resolution</td>
+</tr><tr><td width="134" valign="top">Latitude</td>
+<td width="189" valign="top">8 (with 6 decimal places)</td>
+<td width="225" valign="top">6 decimal positions for .1m resolution or 5 decimal positions for 1m resolution</td>
+</table>
+</body>
+</html>

@@ -12,15 +12,14 @@ public abstract class Reference {
     private final String comment;
     private final String validation;
 
-    public Reference(String name, String comment) {
+    public Reference(String name, CommentParser parser) {
         this.name = name;
         try {
-            CommentParser parser = new CommentParser(comment);
             this.comment = parser.getComment();
             this.validation = parser.getValidation();
         } catch (Exception e) {
             throw new RuntimeException(
-                    "Exception found on " + name + " comment: " + comment, e);
+                    "Exception found on " + name + " comment: " + parser, e);
         }
     }
 

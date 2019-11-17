@@ -2,7 +2,6 @@ package com.fillumina.xmi2jdl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,13 +18,11 @@ public class Entity implements Comparable<Entity> {
     private final boolean filter;
     private final boolean skipServer;
     private final boolean skipClient;
-    private final List<Attribute> attributes = new ArrayList<>();
     private final List<Reference> references = new ArrayList<>();
 
-    public Entity(String id, String name, String comment) {
+    public Entity(String id, String name, CommentParser parser) {
         this.name = name;
         this.id = id;
-        CommentParser parser = new CommentParser(comment);
         this.comment = parser.getComment();
         Options opt = new Options(parser.getValidation());
         this.filter = opt.contains("filter");
@@ -45,43 +42,8 @@ public class Entity implements Comparable<Entity> {
     public String getComment() {
         return comment;
     }
-
-    public void addAttribute(Attribute attribute) {
-        this.attributes.add(attribute);
-    }
-    
-    public void resolveReferences(
-            Map<String, DataType> dataTypes,
-            Map<String, Entity> entities,
-            List<String> errors) {
-        attributes.forEach(a -> {
-            DataType dataType = dataTypes.get(a.getType());
-            if (dataType != null) {
-                if ("undef".equals(dataType.getName())) {
-                    errors.add("for entity " + getName() +
-                            " attribute " + a.getAttributeName() +
-                            " is of undefined type!");
-                }
-                DataTypeRef dataTypeRef = new DataTypeRef(
-                        dataType,
-                        a.getAttributeName(), 
-                        a.getComment());
-                addReference(dataTypeRef);
-            } else {
-                Entity entity = entities.get(a.getType());
-                if (entity != null) {
-                    EntityRef entityRef = new EntityRef(this, entity,
-                            a.getAttributeName(), a.getComment());
-                    addReference(entityRef);
-                } else {
-                    throw new RuntimeException("Referred entity not found: " +
-                            a.getAttributeName());
-                }
-            }
-        });
-    }
-    
-    private void addReference(Reference ref) {
+        
+    public void addReference(Reference ref) {
         references.add(ref);
     }
 

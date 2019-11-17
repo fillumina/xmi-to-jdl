@@ -12,7 +12,7 @@ public class DataTypeRef extends Reference {
     private final String validation;
     private final boolean display;
 
-    public DataTypeRef(DataType dataType, String name, String comment) {
+    public DataTypeRef(DataType dataType, String name, CommentParser comment) {
         super(name, comment);
         this.dataType = dataType;
         String v = getValidation();

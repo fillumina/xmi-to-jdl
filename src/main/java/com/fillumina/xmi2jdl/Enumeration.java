@@ -13,12 +13,13 @@ public class Enumeration extends DataType implements Comparable<Enumeration> {
     private final List<String> values = new ArrayList<>();
 
 
-    public Enumeration(String name, String id, String comment) {
-        super(id, name, comment);
+    public Enumeration(String name, String id, CommentParser parser) {
+        // Enum values are always UPPER CASE in JDL
+        super(id, name, parser);
     }
 
     public void addLiteral(String literal) {
-        values.add(literal);
+        values.add(literal.trim().toUpperCase());
     }
 
     public void appendEnumeration(Appendable buf) throws IOException {

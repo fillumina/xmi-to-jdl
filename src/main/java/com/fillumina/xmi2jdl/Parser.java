@@ -55,6 +55,7 @@ public class Parser {
     public Parser parseInputStream(InputStream is) {
         try {
             createParser().parse(is, hb);
+            hb.consolidate();
         } catch (SAXException | IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -74,6 +75,7 @@ public class Parser {
     public Parser parseFile(File f) {
         try {
             createParser().parse(f, hb);
+            hb.consolidate();
         } catch (SAXException | IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -83,6 +85,7 @@ public class Parser {
     public Parser parseInputSource(InputSource is) {
         try {
             createParser().parse(is, hb);
+            hb.consolidate();
         } catch (SAXException | IOException ex) {
             throw new RuntimeException(ex);
         }

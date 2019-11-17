@@ -1,6 +1,7 @@
 package com.fillumina.xmi2jdl;
 
 import java.io.IOException;
+import java.util.Date;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
@@ -10,12 +11,14 @@ import org.xml.sax.SAXException;
  */
 public class AppTest {
 
+    private static final String FILENAME =
+        "/home/fra/Development/Work/Emporia/ClassDiagram/extended_class_diagram_final_25.xmi";
+    
     public static void main(String[] args) throws IOException, SAXException,
             ParserConfigurationException {
-
-        App.main(new String[]{
-            "/home/fra/Development/Work/Emporia/ClassDiagram/extended_class_diagram_final_24.xmi"
-        });
+        System.out.println("\n\nFile: " + FILENAME);
+        System.out.println("Date: " + (new Date().toString()) + "\n\n");
+        App.main(new String[]{FILENAME});
 
     }
 

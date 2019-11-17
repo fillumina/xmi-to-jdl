@@ -11,24 +11,36 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+
 /**
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class ReadXMLFileUsingSaxparser extends DefaultHandler {
 
+    private final Map<String, ParsedEntity> parsedEntities = new HashMap<>();
+
     private final Map<String, DataType> dataTypes = new HashMap<>();
     private final Map<String, Entity> entities = new HashMap<>();
     private final Map<String, Enumeration> enumerations = new HashMap<>();
     private final List<String> errors = new ArrayList<>();
+    private final Map<String, String> substitutions = new HashMap<>();
 
-    private Entity currentEntity;
+    private ParsedEntity currentEntity;
     private Enumeration currentEnumeration;
 
+
     public void consolidate() {
-        entities.values().forEach(e -> {
-            e.resolveReferences(dataTypes, entities, errors);
+        parsedEntities.values().forEach(e -> {
+            entities.put(e.getId(), e.createEntity(substitutions));
         });
+        parsedEntities.values().forEach(e -> {
+            e.fillEntityAttributes(dataTypes, entities, substitutions, errors);
+        });
+        new EntityCheck(
+                Collections.unmodifiableMap(entities), 
+                Collections.unmodifiableMap(dataTypes), 
+                Collections.unmodifiableMap(enumerations), errors).check();
     }
     
     public void print(Appendable buf) throws IOException {
@@ -99,8 +111,8 @@ public class ReadXMLFileUsingSaxparser extends DefaultHandler {
             switch (qName) {
                 case "UML:Class":
                     {
-                        String name = attributes.getValue("name");
                         String id = attributes.getValue("xmi.id");
+                        String name = attributes.getValue("name");
                         String comment = attributes.getValue("comment");
                         String namespace = attributes.getValue("namespace");
                         if ("Datatypes".equals(namespace)) {
@@ -108,8 +120,8 @@ public class ReadXMLFileUsingSaxparser extends DefaultHandler {
                             dataTypes.put(id, dataType);
                         } else {
                             currentEnumeration = null;
-                            currentEntity = new Entity(id, name, comment);
-                            entities.put(id, currentEntity);
+                            currentEntity = new ParsedEntity(id, name, comment);
+                            parsedEntities.put(id, currentEntity);
                         }
                         break;
                     }
@@ -127,7 +139,7 @@ public class ReadXMLFileUsingSaxparser extends DefaultHandler {
                         String type = attributes.getValue("type");
                         String comment = attributes.getValue("comment");
 
-                        currentEntity.addAttribute(new Attribute(
+                        currentEntity.addAttribute(new ParsedAttribute(
                                 attributeName, type, comment));
                         
                         break;
@@ -137,7 +149,8 @@ public class ReadXMLFileUsingSaxparser extends DefaultHandler {
                         String name = attributes.getValue("name");
                         String id = attributes.getValue("xmi.id");
                         String comment = attributes.getValue("comment");
-                        Enumeration enumeration = new Enumeration(name, id, comment);
+                        Enumeration enumeration = 
+                                new Enumeration(name, id, new CommentParser(comment));
                         enumerations.put(id, enumeration);
                         dataTypes.put(id, enumeration);
                         currentEntity = null;
@@ -148,6 +161,23 @@ public class ReadXMLFileUsingSaxparser extends DefaultHandler {
                     {
                         String name = attributes.getValue("name");
                         currentEnumeration.addLiteral(name);
+                        break;
+                    }
+                    
+                case "notewidget":
+                    {
+                        String content = attributes.getValue("text");
+                        if (content.contains("{substitutions}")) {
+                            String[] lines = content.split("\n");
+                            for (String l : lines) {
+                                int idx = l.indexOf('=');
+                                if (idx != -1) {
+                                    String key = l.substring(0, idx);
+                                    String value = l.substring(idx + 1);
+                                    this.substitutions.put(key, value);
+                                }
+                            }
+                        }
                         break;
                     }
                 default:

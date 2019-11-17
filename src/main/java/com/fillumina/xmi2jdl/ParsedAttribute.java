@@ -4,12 +4,13 @@ package com.fillumina.xmi2jdl;
  *
  * @author fra
  */
-public class Attribute {
+class ParsedAttribute {
+    
     private final String attributeName;
     private final String type;
     private final String comment;
 
-    public Attribute(String attributeName, String type, String comment) {
+    public ParsedAttribute(String attributeName, String type, String comment) {
         this.attributeName = attributeName;
         this.type = type;
         this.comment = comment;
@@ -26,4 +27,5 @@ public class Attribute {
     public String getComment() {
         return comment;
     }
+    
 }
