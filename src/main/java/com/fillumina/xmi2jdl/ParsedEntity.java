@@ -36,13 +36,12 @@ class ParsedEntity {
     public void fillEntityAttributes(
             Map<String, DataType> dataTypes,
             Map<String, Entity> entities,
-            Map<String, String> substitutions,
-            List<String> errors) {
+            Map<String, String> substitutions) {
         attributes.forEach(a -> {
             DataType dataType = dataTypes.get(a.getType());
             if (dataType != null) {
                 if ("undef".equals(dataType.getName())) {
-                    errors.add("for entity " + name +
+                    throw new RuntimeException("for entity " + name +
                             " attribute " + a.getAttributeName() +
                             " is of undefined type!");
                 }

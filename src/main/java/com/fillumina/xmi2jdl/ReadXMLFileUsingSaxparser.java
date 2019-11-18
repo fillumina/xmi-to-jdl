@@ -1,11 +1,7 @@
 package com.fillumina.xmi2jdl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -16,89 +12,27 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class ReadXMLFileUsingSaxparser extends DefaultHandler {
+public class ReadXMLFileUsingSaxparser 
+        extends DefaultHandler 
+        implements EntityDiagram {
 
     private final Map<String, ParsedEntity> parsedEntities = new HashMap<>();
 
     private final Map<String, DataType> dataTypes = new HashMap<>();
     private final Map<String, Entity> entities = new HashMap<>();
     private final Map<String, Enumeration> enumerations = new HashMap<>();
-    private final List<String> errors = new ArrayList<>();
     private final Map<String, String> substitutions = new HashMap<>();
 
     private ParsedEntity currentEntity;
     private Enumeration currentEnumeration;
-
 
     public void consolidate() {
         parsedEntities.values().forEach(e -> {
             entities.put(e.getId(), e.createEntity(substitutions));
         });
         parsedEntities.values().forEach(e -> {
-            e.fillEntityAttributes(dataTypes, entities, substitutions, errors);
+            e.fillEntityAttributes(dataTypes, entities, substitutions);
         });
-        new EntityCheck(
-                Collections.unmodifiableMap(entities), 
-                Collections.unmodifiableMap(dataTypes), 
-                Collections.unmodifiableMap(enumerations), errors).check();
-    }
-    
-    public void print(Appendable buf) throws IOException {
-        buf.append("// " + enumerations.size() + " ENUMERATIONS ")
-                .append(System.lineSeparator())
-                .append(System.lineSeparator());
-
-        for (Enumeration e : sort(enumerations.values())) {
-            e.appendEnumeration(buf);
-        }
-
-        buf.append("// " + entities.size() + " ENTITIES ")
-                .append(System.lineSeparator())
-                .append(System.lineSeparator());
-
-        List<Entity> entitySortedList = sort(entities.values());
-
-        for (Entity e : entitySortedList) {
-            e.appendEntity(buf);
-        }
-
-        buf.append("// RELATIONSHIPS")
-                .append(System.lineSeparator())
-                .append(System.lineSeparator());
-
-        for (Relationship relationship : Relationship.values()) {
-            boolean relationshipPresent = false;
-            for (Entity e : entitySortedList) {
-                if (e.hasRelationships(relationship)) {
-                    relationshipPresent = true;
-                    break;
-                }
-            }
-
-            if (relationshipPresent) {
-                buf.append("relationship ").append(relationship.name())
-                        .append(" {")
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator());
-
-                for (Entity e : entitySortedList) {
-                    e.appendRelationship(relationship, buf);
-                }
-
-                buf.append("}")
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator());
-            }
-        }
-
-
-        buf.append(System.lineSeparator()).append("// ERRORS")
-                .append(System.lineSeparator())
-                .append(System.lineSeparator());
-
-        for (String e : errors) {
-            buf.append(e).append(System.lineSeparator());
-        }
     }
 
     @Override
@@ -195,9 +129,18 @@ public class ReadXMLFileUsingSaxparser extends DefaultHandler {
         }
     }
 
-    private <T extends Comparable<T>> List<T> sort(Collection<T> coll) {
-        List<T> list = new ArrayList<>(coll);
-        Collections.sort(list);
-        return list;
+    @Override
+    public Map<String, DataType> getDataTypes() {
+        return Collections.unmodifiableMap(dataTypes);
+    }
+
+    @Override
+    public Map<String, Entity> getEntities() {
+        return Collections.unmodifiableMap(entities);
+    }
+
+    @Override
+    public Map<String, Enumeration> getEnumerations() {
+        return Collections.unmodifiableMap(enumerations);
     }
 }

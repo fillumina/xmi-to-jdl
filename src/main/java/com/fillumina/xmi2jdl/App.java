@@ -80,8 +80,8 @@ public class App {
         if (filename == null) {
             System.err.println("filename argument missing!");
         } else {
-            new Parser().parseFilename(filename).writeToAppendable(System.out);
+            new Parser().parseFilename(filename)
+                    .exec(new JdlProducer(System.out));
         }
     }
-
 }

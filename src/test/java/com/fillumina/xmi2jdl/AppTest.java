@@ -18,7 +18,10 @@ public class AppTest {
             ParserConfigurationException {
         System.out.println("\n\nFile: " + FILENAME);
         System.out.println("Date: " + (new Date().toString()) + "\n\n");
-        App.main(new String[]{FILENAME});
+        
+        new Parser().parseFilename(FILENAME)
+                    .exec(new JdlProducer(System.out))
+                    .exec(new EntityDiagramValidator());
 
     }
 
