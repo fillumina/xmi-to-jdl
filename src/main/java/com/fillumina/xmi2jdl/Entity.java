@@ -1,8 +1,8 @@
 package com.fillumina.xmi2jdl;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *
@@ -17,15 +17,20 @@ public class Entity implements Comparable<Entity> {
     private final boolean filter;
     private final boolean skipServer;
     private final boolean skipClient;
-    private final List<Reference> references;
+    private final List<DataTypeRef> dataTypes;
+    private final List<EntityRef> entities;
 
     public Entity(String id, String name, String comment, String validation,
-            List<Reference> references) {
+            List<DataTypeRef> dataTypes, List<EntityRef> entities) {
         this.name = name;
         this.id = id;
         this.comment = comment;
-        this.references = Collections.unmodifiableList(references);
-        Options opt = new Options(validation);
+        
+        // that's a known side-effect (which is bad sorry)
+        this.dataTypes = Collections.unmodifiableList(dataTypes);
+        this.entities = Collections.unmodifiableList(entities);
+        
+        var opt = new Options(validation);
         this.filter = opt.contains("filter");
         this.skipClient = opt.contains("skipClient");
         this.skipServer = opt.contains("skipServer");
@@ -44,73 +49,58 @@ public class Entity implements Comparable<Entity> {
         return comment;
     }
 
-    public List<Reference> getReferences() {
-        return references;
+    public List<DataTypeRef> getDataTypes() {
+        return dataTypes;
     }
 
-    public void appendEntity(Appendable buf) throws IOException {
+    public List<EntityRef> getEntities() {
+        return entities;
+    }
+
+    
+    public void appendEntity(Appendable appendable)  {
         // User & Authority are provided by JHipster
         if ("User".equals(name) || "Authority".equals(name)) {
             return;
         }
 
-        if (skipClient) {
-            buf.append("@skipClient").append(System.lineSeparator());
-        }
-        if (skipServer) {
-            buf.append("@skipServer").append(System.lineSeparator());
-        }
-        if (filter) {
-            buf.append("@filter").append(System.lineSeparator());
-        }
+        var buf = new AppendableWrapper(appendable);
+
+        buf.ifTrue(skipClient).writeln("@skipClient");
+        buf.ifTrue(skipServer).writeln("@skipServer");
+        buf.ifTrue(filter).writeln("@filter");
+        
         if (pagination != null) {
-            buf.append("@paginate(")
-                    .append(pagination.getValue())
-                    .append(")")
-                    .append(System.lineSeparator());
+            buf.writeln("@paginate(", pagination.getValue(), ")");
         }
 
-        if (comment != null) {
-            buf.append("/** ").append(comment).append(" */")
-                    .append(System.lineSeparator());
-        }
+        buf.ifNotNull(comment).writeln("/** ", comment, " */");
 
-        buf
-                .append("entity ")
-                .append(name);
+        buf.write("entity ", name);
 
         if (hasDataTypeAttributes()) {
-            buf
-                    .append(" {")
-                    .append(System.lineSeparator());
-
-            for (Reference r : references) {
-                if (r instanceof DataTypeRef) {
-                    r.append(buf);
-                }
-            }
-            buf.append('}');
+            buf.writeln(" {");
+            dataTypes.forEach(r -> r.append(buf.getAppendable()));
+            buf.write('}');
         }
-        buf.append(System.lineSeparator()).append(System.lineSeparator());
+        buf.writeln().writeln();
     }
 
-    public void appendRelationship(Relationship rel , Appendable buf)
-            throws IOException {
+    public void appendRelationship(Relationship rel , Appendable appendable) {
         // User & Authority are provided by JHipster
         if ("User".equals(name) || "Authority".equals(name)) {
             return;
         }
 
-        boolean output = false;
-        for (Reference r : references) {
-            if (r instanceof EntityRef &&
-                    ((EntityRef)r).getRelationship().equals(rel)) {
-                r.append(buf);
-                output = true;
-            }
-        }
-        if (output) {
-            buf.append(System.lineSeparator());
+        AtomicBoolean atLeastOne = new AtomicBoolean(false);
+        
+        entities.stream()
+                .filter(r -> r.getRelationship().equals(rel))
+                .peek(e -> atLeastOne.set(true))
+                .forEach(r -> r.append(appendable));
+        
+        if (atLeastOne.get()) {
+            new AppendableWrapper(appendable).writeln();
         }
     }
 
@@ -120,13 +110,7 @@ public class Entity implements Comparable<Entity> {
             return false;
         }
 
-        for (Reference r : references) {
-            if (r instanceof EntityRef &&
-                    ((EntityRef)r).getRelationship().equals(rel)) {
-                return true;
-            }
-        }
-        return false;
+        return entities.stream().anyMatch(r -> r.getRelationship().equals(rel));
     }
 
     private boolean hasDataTypeAttributes() {
@@ -135,17 +119,12 @@ public class Entity implements Comparable<Entity> {
             return false;
         }
 
-        for (Reference r : references) {
-            if (r instanceof DataTypeRef) {
-                return true;
-            }
-        }
-        return false;
+        return !dataTypes.isEmpty();
     }
 
     public String getDisplayField() {
-        for (Reference r : references) {
-            if (r instanceof DataTypeRef && ((DataTypeRef)r).isDisplay()) {
+        for (Reference r : dataTypes) {
+            if (((DataTypeRef)r).isDisplay()) {
                 return r.getName();
             }
         }

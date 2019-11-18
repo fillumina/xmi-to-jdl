@@ -1,7 +1,5 @@
 package com.fillumina.xmi2jdl;
 
-import java.io.IOException;
-
 /**
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
@@ -30,5 +28,5 @@ public abstract class Reference {
         return validation;
     }
 
-    public abstract void append(Appendable buf) throws IOException;
+    public abstract void append(Appendable buf);
 }

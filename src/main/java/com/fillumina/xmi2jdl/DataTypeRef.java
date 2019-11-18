@@ -1,7 +1,5 @@
 package com.fillumina.xmi2jdl;
 
-import java.io.IOException;
-
 /**
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
@@ -31,23 +29,19 @@ public class DataTypeRef extends Reference {
     }
 
     @Override
-    public void append(Appendable buf) throws IOException {
-        String comment = getComment();
+    public void append(Appendable appendable) {
+        var buf = new AppendableWrapper(appendable);
+        var comment = getComment();
         if (comment != null) {
-            buf.append("\t/** ").append(comment).append(" */")
-                    .append(System.lineSeparator());
+            buf.writeln("\t/** ", comment, " */");
         }
 
-        buf
-                .append('\t')
-                .append(getName())
-                .append(" ")
-                .append(dataType.toString());
+        buf.write("\t", getName(), " ", dataType.toString());
 
         if (validation != null) {
-            buf.append(" ").append(validation);
+            buf.write(" ", validation);
         }
 
-        buf.append(System.lineSeparator());
+        buf.writeln();
     }
 }

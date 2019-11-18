@@ -76,7 +76,7 @@ public class App {
 
     public static void main(String[] args) throws IOException, SAXException,
             ParserConfigurationException {
-        String filename = args[0];
+        var filename = args[0];
         if (filename == null) {
             System.err.println("filename argument missing!");
         } else {

@@ -4,7 +4,6 @@ import com.fillumina.xmi2jdl.DataType;
 import com.fillumina.xmi2jdl.DataTypeRef;
 import com.fillumina.xmi2jdl.Entity;
 import com.fillumina.xmi2jdl.EntityRef;
-import com.fillumina.xmi2jdl.Reference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,9 @@ class ParsedEntity {
     private final String id;
     private final String name;
     private final String comment;
-    private final List<Reference> references = new ArrayList<>();
+
+    private final List<DataTypeRef> dataTypes = new ArrayList<>();
+    private final List<EntityRef> entities = new ArrayList<>();
 
     private Entity entity;
 
@@ -37,20 +38,20 @@ class ParsedEntity {
         CommentParser cp = 
                 new CommentParser(substitutions, comment );
         entity = new Entity(id, name, cp.getComment(), cp.getValidation(), 
-                references);
+                dataTypes, entities);
         return entity;
     }
         
     /** All Entities must be created first */
     public void fillEntityAttributes(
-            Map<String, DataType> dataTypes,
-            Map<String, ParsedEntity> parsedEntities,
-            Map<String, String> substitutions) {
+            Map<String, DataType> dataTypeMap,
+            Map<String, ParsedEntity> parsedEntitiesMap,
+            Map<String, String> substitutionsMap) {
         attributes.forEach(a -> {
             final String type = a.getType();
             CommentParser cp = 
-                    new CommentParser(substitutions, a.getComment() );
-            DataType dataType = dataTypes.get(type);
+                    new CommentParser(substitutionsMap, a.getComment() );
+            DataType dataType = dataTypeMap.get(type);
             if (dataType != null) {
                 if ("undef".equals(dataType.getName())) {
                     throw new RuntimeException("for entity " + name +
@@ -61,15 +62,15 @@ class ParsedEntity {
                         dataType,
                         a.getAttributeName(), 
                         cp.getComment(), cp.getValidation() );
-                references.add(dataTypeRef);
+                dataTypes.add(dataTypeRef);
             } else {
-                ParsedEntity target = parsedEntities.get(type);
+                ParsedEntity target = parsedEntitiesMap.get(type);
                 if (target != null) {
                     EntityRef entityRef = new EntityRef(
                             entity, target.entity,
                             a.getAttributeName(), 
                             cp.getComment(), cp.getValidation() );
-                    references.add(entityRef);
+                    entities.add(entityRef);
                 } else {
                     throw new RuntimeException(
                             "Referred entity not found for attribute '" +

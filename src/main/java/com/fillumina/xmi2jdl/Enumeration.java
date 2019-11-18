@@ -1,6 +1,5 @@
 package com.fillumina.xmi2jdl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,32 +22,25 @@ public class Enumeration extends DataType implements Comparable<Enumeration> {
         values.add(literal.trim().toUpperCase());
     }
 
-    public void appendEnumeration(Appendable buf) throws IOException {
+    public void appendEnumeration(Appendable appendable) {
+        var buf = new AppendableWrapper(appendable);
+        
         String comment = getComment();
-        if (comment != null) {
-            buf.append("/** ").append(comment).append(" */")
-                    .append(System.lineSeparator());
-        }
+        buf.ifNotNull(comment).writeln("/** ", comment, " */");
 
-        buf
-                .append("enum ")
-                .append(getName())
-                .append(" {")
-                .append(System.lineSeparator())
-                .append('\t');
+        buf.writeln("enum ", getName(), " {").write('\t');
 
         boolean first = true;
         for (String s : values) {
             if (!first) {
-                buf.append(", ");
+                buf.write(", ");
             } else {
                 first = false;
             }
-            buf.append(s);
+            buf.write(s);
         }
 
-        buf.append(System.lineSeparator()).append('}')
-                .append(System.lineSeparator()).append(System.lineSeparator());
+        buf.writeln().writeln("}").writeln().writeln();
     }
 
     @Override

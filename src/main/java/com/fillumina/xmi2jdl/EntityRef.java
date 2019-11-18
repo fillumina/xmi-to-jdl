@@ -1,7 +1,5 @@
 package com.fillumina.xmi2jdl;
 
-import java.io.IOException;
-
 /**
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
@@ -55,63 +53,42 @@ public class EntityRef extends Reference {
     }
 
     @Override
-    public void append(Appendable buf) throws IOException {
-        String c = getComment();
+    public void append(Appendable appendable) {
+        var buf = new AppendableWrapper(appendable);
+        var c = getComment();
         if (c != null) {
-            buf.append("\t/** ").append(c).append(" */")
-                    .append(System.lineSeparator());
+            buf.writeln("\t/** ", c, " */");
         }
 
         if (unidirectional) {
-            String targetDisplayField = target.getDisplayField();
-
-            buf
-                .append('\t')
-                .append(owner.getName())
-                .append("{")
-                .append(attributeName);
-
-            if (targetDisplayField != null) {
-                buf.append('(').append(targetDisplayField).append(')');
-            }
-
-            buf
-                .append("} to ")
-                .append(target.getName());
+            var targetDisplayField = target.getDisplayField();
+            buf.write("\t", owner.getName(), "{", attributeName);
+            buf.ifNotNull(targetDisplayField).write("(", targetDisplayField, ")");
+            buf.write("} to ", target.getName());
             
         } else {
 
-            String targetDisplayField = target.getDisplayField();
-            String ownerDisplayField = owner.getDisplayField();
+            var targetDisplayField = target.getDisplayField();
+            var ownerDisplayField = owner.getDisplayField();
 
-            buf
-                .append('\t')
-                .append(target.getName())
-                .append("{")
-                .append(Character.toLowerCase(owner.getName().charAt(0)) +
-                        owner.getName().substring(1));
+            buf.write("\t", target.getName(), "{", objName(owner));
 
-            if (ownerDisplayField != null) {
-                buf.append('(').append(ownerDisplayField).append(')');
-            }
+            buf.ifNotNull(ownerDisplayField).write("(", ownerDisplayField, ")");
 
-            buf
-                .append("} to ")
-                .append(owner.getName())
-                .append("{")
-                .append(attributeName);
+            buf.write("} to ", owner.getName(), "{", attributeName);
 
-            if (targetDisplayField != null) {
-                buf.append('(').append(targetDisplayField).append(')');
-            }
+            buf.ifNotNull(targetDisplayField).write("(", targetDisplayField, ")");
 
-            buf.append("}");
+            buf.write("}");
         }
 
-        if (validation != null) {
-            buf.append(' ').append(validation);
-        }
+        buf.ifNotNull(validation).write(" ", validation);
 
-        buf.append(System.lineSeparator());
+        buf.writeln();
+    }
+
+    private String objName(Entity owner) {
+        return Character.toLowerCase(owner.getName().charAt(0)) +
+                owner.getName().substring(1);
     }
 }
