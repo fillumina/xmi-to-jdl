@@ -24,6 +24,10 @@ public class DataTypeRef extends Reference {
         }
     }
 
+    public DataType getDataType() {
+        return dataType;
+    }
+
     public boolean isDisplay() {
         return display;
     }
@@ -44,4 +48,12 @@ public class DataTypeRef extends Reference {
 
         buf.writeln();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        append(buf);
+        return buf.toString();
+    }
+    
 }

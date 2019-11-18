@@ -3,7 +3,7 @@ package com.fillumina.xmi2jdl.parser;
 import com.fillumina.xmi2jdl.DataType;
 import com.fillumina.xmi2jdl.DataTypeRef;
 import com.fillumina.xmi2jdl.Entity;
-import com.fillumina.xmi2jdl.EntityRef;
+import com.fillumina.xmi2jdl.Relationship;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,8 @@ class ParsedEntity {
     private final String comment;
 
     private final List<DataTypeRef> dataTypes = new ArrayList<>();
-    private final List<EntityRef> entities = new ArrayList<>();
+    private final List<Relationship> ownedRelations = new ArrayList<>();
+    private final List<Relationship> allRelations = new ArrayList<>();
 
     private Entity entity;
 
@@ -34,15 +35,18 @@ class ParsedEntity {
         this.attributes.add(attribute);
     }
     
+    public void addRelationship(Relationship entityRef) {
+        allRelations.add(entityRef);
+    }
+    
     public Entity createEntity(Map<String,String> substitutions) {
         CommentParser cp = 
-                new CommentParser(substitutions, comment );
+                new CommentParser(substitutions, comment);
         entity = new Entity(id, name, cp.getComment(), cp.getValidation(), 
-                dataTypes, entities);
+                dataTypes, ownedRelations, allRelations);
         return entity;
     }
         
-    /** All Entities must be created first */
     public void fillEntityAttributes(
             Map<String, DataType> dataTypeMap,
             Map<String, ParsedEntity> parsedEntitiesMap,
@@ -66,11 +70,14 @@ class ParsedEntity {
             } else {
                 ParsedEntity target = parsedEntitiesMap.get(type);
                 if (target != null) {
-                    EntityRef entityRef = new EntityRef(
+                    Relationship entityRef = new Relationship(
                             entity, target.entity,
                             a.getAttributeName(), 
                             cp.getComment(), cp.getValidation() );
-                    entities.add(entityRef);
+                    ownedRelations.add(entityRef);
+                    
+                    allRelations.add(entityRef);
+                    target.addRelationship(entityRef);
                 } else {
                     throw new RuntimeException(
                             "Referred entity not found for attribute '" +

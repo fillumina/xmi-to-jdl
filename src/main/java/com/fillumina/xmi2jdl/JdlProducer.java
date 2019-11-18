@@ -35,7 +35,7 @@ public class JdlProducer implements EntityDiagramConsumer {
         entitySortedList.forEach(e -> e.appendEntity(buf.getAppendable()) );
 
         buf.writeln("// RELATIONSHIPS").writeln();
-        for (Relationship relationship : Relationship.values()) {
+        for (RelationshipType relationship : RelationshipType.values()) {
             boolean relationshipPresent = false;
             for (Entity e : entitySortedList) {
                 if (e.hasRelationships(relationship)) {

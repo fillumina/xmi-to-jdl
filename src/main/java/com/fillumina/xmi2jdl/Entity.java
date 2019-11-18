@@ -2,6 +2,7 @@ package com.fillumina.xmi2jdl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -18,17 +19,22 @@ public class Entity implements Comparable<Entity> {
     private final boolean skipServer;
     private final boolean skipClient;
     private final List<DataTypeRef> dataTypes;
-    private final List<EntityRef> entities;
+    private final List<Relationship> ownedRelationships;
+    private final List<Relationship> allRelationships;
+
 
     public Entity(String id, String name, String comment, String validation,
-            List<DataTypeRef> dataTypes, List<EntityRef> entities) {
+            List<DataTypeRef> dataTypes, 
+            List<Relationship> ownedRelationships,
+            List<Relationship> allRelationships) {
         this.name = name;
         this.id = id;
         this.comment = comment;
         
         // that's a known side-effect (which is bad sorry)
         this.dataTypes = Collections.unmodifiableList(dataTypes);
-        this.entities = Collections.unmodifiableList(entities);
+        this.ownedRelationships = Collections.unmodifiableList(ownedRelationships);
+        this.allRelationships = Collections.unmodifiableList(allRelationships);
         
         var opt = new Options(validation);
         this.filter = opt.contains("filter");
@@ -53,10 +59,24 @@ public class Entity implements Comparable<Entity> {
         return dataTypes;
     }
 
-    public List<EntityRef> getEntities() {
-        return entities;
+    public List<Relationship> getOwnedRelationships() {
+        return ownedRelationships;
     }
 
+    public List<Relationship> getAllRelationships() {
+        return allRelationships;
+    }
+    
+    public Optional<DataTypeRef> getFieldByName(String name) {
+        return dataTypes.stream()
+                .filter(d -> d.getName().equals(name))
+                .findFirst();
+    }
+    
+    public Relationship getRelationByName(String name) {
+        return allRelationships.stream().filter( d -> d.getName().equals(name))
+                .findFirst().get();
+    }
     
     public void appendEntity(Appendable appendable)  {
         // User & Authority are provided by JHipster
@@ -86,7 +106,7 @@ public class Entity implements Comparable<Entity> {
         buf.writeln().writeln();
     }
 
-    public void appendRelationship(Relationship rel , Appendable appendable) {
+    public void appendRelationship(RelationshipType rel , Appendable appendable) {
         // User & Authority are provided by JHipster
         if ("User".equals(name) || "Authority".equals(name)) {
             return;
@@ -94,8 +114,8 @@ public class Entity implements Comparable<Entity> {
 
         AtomicBoolean atLeastOne = new AtomicBoolean(false);
         
-        entities.stream()
-                .filter(r -> r.getRelationship().equals(rel))
+        ownedRelationships.stream()
+                .filter(r -> r.getRelationshipType().equals(rel))
                 .peek(e -> atLeastOne.set(true))
                 .forEach(r -> r.append(appendable));
         
@@ -104,13 +124,13 @@ public class Entity implements Comparable<Entity> {
         }
     }
 
-    public boolean hasRelationships(Relationship rel) {
+    public boolean hasRelationships(RelationshipType rel) {
         // User & Authority are provided by JHipster
         if ("User".equals(name) || "Authority".equals(name)) {
             return false;
         }
 
-        return entities.stream().anyMatch(r -> r.getRelationship().equals(rel));
+        return ownedRelationships.stream().anyMatch(r -> r.getRelationshipType().equals(rel));
     }
 
     private boolean hasDataTypeAttributes() {
@@ -134,5 +154,12 @@ public class Entity implements Comparable<Entity> {
     @Override
     public int compareTo(Entity o) {
         return getName().compareTo(o.getName());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        appendEntity(buf);
+        return buf.toString();
     }
 }
