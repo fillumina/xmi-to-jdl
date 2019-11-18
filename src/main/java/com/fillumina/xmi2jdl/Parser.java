@@ -1,5 +1,6 @@
 package com.fillumina.xmi2jdl;
 
+import com.fillumina.xmi2jdl.parser.ReadXMLFileUsingSaxparser;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

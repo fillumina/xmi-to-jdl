@@ -1,5 +1,11 @@
-package com.fillumina.xmi2jdl;
+package com.fillumina.xmi2jdl.parser;
 
+import com.fillumina.xmi2jdl.CommentParser;
+import com.fillumina.xmi2jdl.DataType;
+import com.fillumina.xmi2jdl.DataTypeRef;
+import com.fillumina.xmi2jdl.Entity;
+import com.fillumina.xmi2jdl.EntityRef;
+import com.fillumina.xmi2jdl.Reference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +20,8 @@ class ParsedEntity {
     private final String id;
     private final String name;
     private final String comment;
-    
+    private final List<Reference> references = new ArrayList<>();
+
     private Entity entity;
 
     public ParsedEntity(String id, String name, String comment) {
@@ -28,17 +35,19 @@ class ParsedEntity {
     }
     
     public Entity createEntity(Map<String,String> substitutions) {
-        return entity = 
-                new Entity(id, name, new CommentParser(substitutions, comment));
+        entity = new Entity(id, name, new CommentParser(substitutions, comment), 
+                references);
+        return entity;
     }
-    
+        
     /** All Entities must be created first */
     public void fillEntityAttributes(
             Map<String, DataType> dataTypes,
-            Map<String, Entity> entities,
+            Map<String, ParsedEntity> parsedEntities,
             Map<String, String> substitutions) {
         attributes.forEach(a -> {
-            DataType dataType = dataTypes.get(a.getType());
+            final String type = a.getType();
+            DataType dataType = dataTypes.get(type);
             if (dataType != null) {
                 if ("undef".equals(dataType.getName())) {
                     throw new RuntimeException("for entity " + name +
@@ -49,24 +58,25 @@ class ParsedEntity {
                         dataType,
                         a.getAttributeName(), 
                         new CommentParser(substitutions, a.getComment() ) );
-                entity.addReference(dataTypeRef);
+                references.add(dataTypeRef);
             } else {
-                Entity e = entities.get(a.getType());
-                if (e != null) {
-                    EntityRef entityRef = new EntityRef(entity, e,
+                ParsedEntity target = parsedEntities.get(type);
+                if (target != null) {
+                    EntityRef entityRef = new EntityRef(
+                            entity, target.entity,
                             a.getAttributeName(), 
                             new CommentParser(substitutions, a.getComment()) );
-                    entity.addReference(entityRef);
+                    references.add(entityRef);
                 } else {
                     throw new RuntimeException(
                             "Referred entity not found for attribute '" +
                             a.getAttributeName() + 
-                            "' of entity " + entity.getName());
+                            "' of entity " + name);
                 }
             }
         });
     }
-
+        
     public String getId() {
         return id;
     }

@@ -31,5 +31,12 @@ public class EntityDiagramValidator implements EntityDiagramConsumer {
             System.out.println("Executing Validator ...");
         }
         
+        void allConnectedToDiscountMustHaveNameField() {
+            entities.values().forEach(e -> {
+                
+            });
+            
+            
+        }
     }
 }

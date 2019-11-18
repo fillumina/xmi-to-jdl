@@ -1,9 +1,8 @@
 package com.fillumina.xmi2jdl;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -18,12 +17,14 @@ public class Entity implements Comparable<Entity> {
     private final boolean filter;
     private final boolean skipServer;
     private final boolean skipClient;
-    private final List<Reference> references = new ArrayList<>();
+    private final List<Reference> references;
 
-    public Entity(String id, String name, CommentParser parser) {
+    public Entity(String id, String name, CommentParser parser,
+            List<Reference> references) {
         this.name = name;
         this.id = id;
         this.comment = parser.getComment();
+        this.references = Collections.unmodifiableList(references);
         Options opt = new Options(parser.getValidation());
         this.filter = opt.contains("filter");
         this.skipClient = opt.contains("skipClient");
@@ -42,9 +43,9 @@ public class Entity implements Comparable<Entity> {
     public String getComment() {
         return comment;
     }
-        
-    public void addReference(Reference ref) {
-        references.add(ref);
+
+    public List<Reference> getReferences() {
+        return references;
     }
 
     public void appendEntity(Appendable buf) throws IOException {
@@ -93,21 +94,6 @@ public class Entity implements Comparable<Entity> {
         buf.append(System.lineSeparator()).append(System.lineSeparator());
     }
 
-    public boolean hasRelationships(Relationship rel) {
-        // User & Authority are provided by JHipster
-        if ("User".equals(name) || "Authority".equals(name)) {
-            return false;
-        }
-
-        for (Reference r : references) {
-            if (r instanceof EntityRef &&
-                    ((EntityRef)r).getRelationship().equals(rel)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void appendRelationship(Relationship rel , Appendable buf)
             throws IOException {
         // User & Authority are provided by JHipster
@@ -126,6 +112,21 @@ public class Entity implements Comparable<Entity> {
         if (output) {
             buf.append(System.lineSeparator());
         }
+    }
+
+    public boolean hasRelationships(Relationship rel) {
+        // User & Authority are provided by JHipster
+        if ("User".equals(name) || "Authority".equals(name)) {
+            return false;
+        }
+
+        for (Reference r : references) {
+            if (r instanceof EntityRef &&
+                    ((EntityRef)r).getRelationship().equals(rel)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean hasDataTypeAttributes() {

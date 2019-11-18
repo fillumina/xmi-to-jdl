@@ -1,5 +1,10 @@
-package com.fillumina.xmi2jdl;
+package com.fillumina.xmi2jdl.parser;
 
+import com.fillumina.xmi2jdl.CommentParser;
+import com.fillumina.xmi2jdl.DataType;
+import com.fillumina.xmi2jdl.Entity;
+import com.fillumina.xmi2jdl.EntityDiagram;
+import com.fillumina.xmi2jdl.Enumeration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +36,7 @@ public class ReadXMLFileUsingSaxparser
             entities.put(e.getId(), e.createEntity(substitutions));
         });
         parsedEntities.values().forEach(e -> {
-            e.fillEntityAttributes(dataTypes, entities, substitutions);
+            e.fillEntityAttributes(dataTypes, parsedEntities, substitutions);
         });
     }
 

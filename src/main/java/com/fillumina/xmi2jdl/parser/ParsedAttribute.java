@@ -1,4 +1,4 @@
-package com.fillumina.xmi2jdl;
+package com.fillumina.xmi2jdl.parser;
 
 /**
  *
