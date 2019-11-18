@@ -1,6 +1,5 @@
 package com.fillumina.xmi2jdl;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -32,9 +31,9 @@ public class Entity implements Comparable<Entity> {
         this.comment = comment;
         
         // that's a known side-effect (which is bad sorry)
-        this.dataTypes = Collections.unmodifiableList(dataTypes);
-        this.ownedRelationships = Collections.unmodifiableList(ownedRelationships);
-        this.allRelationships = Collections.unmodifiableList(allRelationships);
+        this.dataTypes = dataTypes;
+        this.ownedRelationships = ownedRelationships;
+        this.allRelationships = allRelationships;
         
         var opt = new Options(validation);
         this.filter = opt.contains("filter");

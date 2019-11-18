@@ -8,11 +8,10 @@ public class EntityDiagramValidator extends AbstractValidator {
 
     @Override
     void executeTests() {
-        startTests();
-
-        this.allConnectedToDiscountMustHaveNameField();
-
-        endTests();
+        allConnectedToDiscountMustHaveNameField();
+        allPricesShouldHaveCreationTime();
+        allConnectedToMediaShouldHaveMediaAsField();
+        allPricesNotOptionPriceShouldHavePrice();
     }
 
     void allConnectedToDiscountMustHaveNameField() {
@@ -21,9 +20,60 @@ public class EntityDiagramValidator extends AbstractValidator {
         findEntityByName("Detail").ifPresentOrElse(( Entity detail) -> {
             detail.getAllRelationships().stream()
                     .map(e -> e.getOwner())
-                    .filter(e -> e != detail && e.getFieldByName("name").isEmpty())
+                    .filter(e -> e != detail)
+                    .peek(e -> log("checking " + e.getName())) 
+                    .filter(e -> e.getFieldByName("name").isEmpty())
                     .forEach(e -> error("Entity missing 'name': ", e.getName()));
 
         }, () -> error("Detail not found!"));
+        
+        endTest();
+    }
+
+    void allPricesShouldHaveCreationTime() {
+        test("allPricesShouldHaveCreationTime");
+
+        findEntitiesByName(".*Price").forEach( e -> {
+            log("checking ", e.getName());
+            long count = e.getDataTypes().stream()
+                    .filter( dt -> dt.getName().equals("creationDate"))
+                    .count();
+            if (count == 0) {
+                error("Price missing 'creationDate':", e.getName());
+            }
+        });
+        
+        endTest();
+    }
+
+    void allPricesNotOptionPriceShouldHavePrice() {
+        test("allPricesNotOptionPriceShouldHavePrice");
+
+        findEntitiesByName("^((?!Option).)*Price$").forEach( e -> {
+            log("checking ", e.getName());
+            long count = e.getDataTypes().stream()
+                    .filter( dt -> dt.getName().equals("price"))
+                    .count();
+            if (count == 0) {
+                error("Price missing 'price':", e.getName());
+            }
+        });
+        
+        endTest();
+    }
+
+    void allConnectedToMediaShouldHaveMediaAsField() {
+        test("allConnectedToMediaShouldHaveMediaAsField");
+
+        findEntityByName("MediaContent").ifPresentOrElse(( Entity media) -> {
+            media.getAllRelationships().stream()
+                    .filter(e -> e.getOwner() != media)
+                    .peek(e -> log("checking " + e.getOwner().getName(), e.getName())) 
+                    .filter(e -> !e.getName().equals("media"))
+                    .forEach(e -> error("Entity missing 'media': ", e.getName()));
+
+        }, () -> error("MediaContent not found!"));
+        
+        endTest();
     }
 }

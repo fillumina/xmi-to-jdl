@@ -4,7 +4,6 @@ import com.fillumina.xmi2jdl.DataType;
 import com.fillumina.xmi2jdl.Entity;
 import com.fillumina.xmi2jdl.EntityDiagram;
 import com.fillumina.xmi2jdl.Enumeration;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.xml.sax.Attributes;
@@ -136,16 +135,16 @@ public class ReadXMLFileUsingSaxparser
 
     @Override
     public Map<String, DataType> getDataTypes() {
-        return Collections.unmodifiableMap(dataTypes);
+        return dataTypes;
     }
 
     @Override
     public Map<String, Entity> getEntities() {
-        return Collections.unmodifiableMap(entities);
+        return entities;
     }
 
     @Override
     public Map<String, Enumeration> getEnumerations() {
-        return Collections.unmodifiableMap(enumerations);
+        return enumerations;
     }
 }
