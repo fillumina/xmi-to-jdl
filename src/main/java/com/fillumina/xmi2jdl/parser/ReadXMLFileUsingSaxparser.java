@@ -1,6 +1,5 @@
 package com.fillumina.xmi2jdl.parser;
 
-import com.fillumina.xmi2jdl.CommentParser;
 import com.fillumina.xmi2jdl.DataType;
 import com.fillumina.xmi2jdl.Entity;
 import com.fillumina.xmi2jdl.EntityDiagram;
@@ -55,7 +54,7 @@ public class ReadXMLFileUsingSaxparser
                         String comment = attributes.getValue("comment");
                         String namespace = attributes.getValue("namespace");
                         if ("Datatypes".equals(namespace)) {
-                            DataType dataType = new DataType(id, name, null);
+                            DataType dataType = new DataType(id, name, null, null);
                             dataTypes.put(id, dataType);
                         } else {
                             currentEnumeration = null;
@@ -68,7 +67,7 @@ public class ReadXMLFileUsingSaxparser
                     {
                         String name = attributes.getValue("name");
                         String id = attributes.getValue("xmi.id");
-                        DataType dataType = new DataType(id, name, null);
+                        DataType dataType = new DataType(id, name, null, null);
                         dataTypes.put(id, dataType);
                         break;
                     }
@@ -88,8 +87,9 @@ public class ReadXMLFileUsingSaxparser
                         String name = attributes.getValue("name");
                         String id = attributes.getValue("xmi.id");
                         String comment = attributes.getValue("comment");
-                        Enumeration enumeration = 
-                                new Enumeration(name, id, new CommentParser(comment));
+                        var cp = new CommentParser(comment);
+                        Enumeration enumeration = new Enumeration(
+                                name, id, cp.getComment(), cp.getValidation());
                         enumerations.put(id, enumeration);
                         dataTypes.put(id, enumeration);
                         currentEntity = null;

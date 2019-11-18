@@ -1,6 +1,5 @@
 package com.fillumina.xmi2jdl.parser;
 
-import com.fillumina.xmi2jdl.CommentParser;
 import com.fillumina.xmi2jdl.DataType;
 import com.fillumina.xmi2jdl.DataTypeRef;
 import com.fillumina.xmi2jdl.Entity;
@@ -35,7 +34,9 @@ class ParsedEntity {
     }
     
     public Entity createEntity(Map<String,String> substitutions) {
-        entity = new Entity(id, name, new CommentParser(substitutions, comment), 
+        CommentParser cp = 
+                new CommentParser(substitutions, comment );
+        entity = new Entity(id, name, cp.getComment(), cp.getValidation(), 
                 references);
         return entity;
     }
@@ -47,6 +48,8 @@ class ParsedEntity {
             Map<String, String> substitutions) {
         attributes.forEach(a -> {
             final String type = a.getType();
+            CommentParser cp = 
+                    new CommentParser(substitutions, a.getComment() );
             DataType dataType = dataTypes.get(type);
             if (dataType != null) {
                 if ("undef".equals(dataType.getName())) {
@@ -57,7 +60,7 @@ class ParsedEntity {
                 DataTypeRef dataTypeRef = new DataTypeRef(
                         dataType,
                         a.getAttributeName(), 
-                        new CommentParser(substitutions, a.getComment() ) );
+                        cp.getComment(), cp.getValidation() );
                 references.add(dataTypeRef);
             } else {
                 ParsedEntity target = parsedEntities.get(type);
@@ -65,7 +68,7 @@ class ParsedEntity {
                     EntityRef entityRef = new EntityRef(
                             entity, target.entity,
                             a.getAttributeName(), 
-                            new CommentParser(substitutions, a.getComment()) );
+                            cp.getComment(), cp.getValidation() );
                     references.add(entityRef);
                 } else {
                     throw new RuntimeException(

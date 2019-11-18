@@ -18,8 +18,9 @@ public class EntityRef extends Reference {
     public EntityRef(Entity owner,
             Entity target,
             String attributeName,
-            CommentParser parser) {
-        super(attributeName, parser);
+            String comment, 
+            String validation) {
+        super(attributeName, comment, validation);
         this.owner = owner;
         this.target = target;
         this.attributeName = attributeName;

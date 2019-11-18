@@ -11,11 +11,11 @@ public class DataType {
     private final String comment;
     private final String validation;
 
-    public DataType(String id, String name, CommentParser parser) {
+    public DataType(String id, String name, String comment, String validation) {
         this.id = id;
         this.name = name;
-        this.comment = parser == null ? null : parser.getComment();
-        this.validation = parser == null ? null : parser.getValidation();
+        this.comment = comment;
+        this.validation = validation;
     }
 
     public String getName() {

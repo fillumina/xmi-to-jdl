@@ -12,8 +12,9 @@ public class DataTypeRef extends Reference {
     private final String validation;
     private final boolean display;
 
-    public DataTypeRef(DataType dataType, String name, CommentParser comment) {
-        super(name, comment);
+    public DataTypeRef(DataType dataType, String name, 
+            String comment, String validation) {
+        super(name, comment, validation);
         this.dataType = dataType;
         String v = getValidation();
         if (v != null && v.contains("display")) {

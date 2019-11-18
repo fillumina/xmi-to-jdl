@@ -19,13 +19,13 @@ public class Entity implements Comparable<Entity> {
     private final boolean skipClient;
     private final List<Reference> references;
 
-    public Entity(String id, String name, CommentParser parser,
+    public Entity(String id, String name, String comment, String validation,
             List<Reference> references) {
         this.name = name;
         this.id = id;
-        this.comment = parser.getComment();
+        this.comment = comment;
         this.references = Collections.unmodifiableList(references);
-        Options opt = new Options(parser.getValidation());
+        Options opt = new Options(validation);
         this.filter = opt.contains("filter");
         this.skipClient = opt.contains("skipClient");
         this.skipServer = opt.contains("skipServer");

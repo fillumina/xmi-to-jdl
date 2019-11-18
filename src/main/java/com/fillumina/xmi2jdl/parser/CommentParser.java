@@ -1,4 +1,4 @@
-package com.fillumina.xmi2jdl;
+package com.fillumina.xmi2jdl.parser;
 
 import java.util.Map;
 
@@ -6,7 +6,7 @@ import java.util.Map;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class CommentParser {
+class CommentParser {
     private final String comment;
     private final String validation;
 
