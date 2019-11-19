@@ -33,7 +33,7 @@ public class EntityDiagramValidator extends AbstractValidator {
     void allPricesShouldHaveCreationTime() {
         test("allPricesShouldHaveCreationTime");
 
-        findEntitiesByName(".*Price").forEach( e -> {
+        findEntitiesByRegexp(".*Price").forEach( e -> {
             log("checking ", e.getName());
             long count = e.getDataTypes().stream()
                     .filter( dt -> dt.getName().equals("creationDate"))
@@ -49,7 +49,7 @@ public class EntityDiagramValidator extends AbstractValidator {
     void allPricesNotOptionPriceShouldHavePrice() {
         test("allPricesNotOptionPriceShouldHavePrice");
 
-        findEntitiesByName("^((?!Option).)*Price$").forEach( e -> {
+        findEntitiesByRegexp("^((?!Option).)*Price$").forEach( e -> {
             log("checking ", e.getName());
             long count = e.getDataTypes().stream()
                     .filter( dt -> dt.getName().equals("price"))

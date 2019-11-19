@@ -36,7 +36,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         return entities.values().stream().filter((e) -> e.getName().equals(name)).findFirst();
     }
     
-    protected List<Entity> findEntitiesByName(String regexp) {
+    protected List<Entity> findEntitiesByRegexp(String regexp) {
         Pattern pattern = Pattern.compile(regexp);
         return entities.values().stream()
                 .filter(e -> pattern.matcher(e.getName()).matches())

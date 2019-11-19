@@ -1,19 +1,100 @@
-## XMI to JDL
 
-This is a very simple project to convert an XMI file produced by the open
-source project [Umbrello UML Modeller](https://umbrello.kde.org/) to a JDL file
-readable by [JHipster](https://www.jhipster.tech/jdl/).
+# XMI to JDL
+Reads an Class Diagram XMI file exported by [Umbrello UML Modeller
+(https://umbrello.kde.org/) and possibly other products compatible with
+the format and produces a 
+[JHipster](https://www.jhipster.tech/jdl/) JDL output.
 
-The importer is very limited and its aim is to allow to design a complex
-application by using a simpler visual modeler instead of using the textual
-file which I find really difficult to manage if the number of classes grows.
+Relationships are `ManyToOne` by default and the owner is the entity
+containing the actual field (the FK on the DB). The relation must be
+declared only on the owner part. The multiplicity is not read from the
+Class Diagram itself but specified in the comment using curly brackets {}
+together with validations.
 
-By default all relationships are bidirectional OneToMany and must be defined
-in the table that will have the foreign key (FK).
+Only some of the options described here are parsed, the others will be
+just copied in the final JDL, so it's future ready for new options 
+to be added to JDL.
 
-es: {OneToOne with jpaDerivedIdentifier}
+## Entity
 
-Validations can be added on attributes in the comment enclosed by
-curly braces {}.
+The following options (no parameters) can be added in curly braces in the
+comment of any Entity.
 
-Comments to entities, enums and attributes are duly reported in the JDL.
+ . `skipClient` doesn't build the client
+
+ . `skipServer` doesn't build the server
+
+ . `filter` adds advanced search filters to the server API
+(parsed option)
+
+ . `pagination` or `infinite-scroll` pagination types
+(parsed option)
+
+## Attribute
+Attributes can be simple data types (such as String, LocalDate, Integer...)
+accepted by JDL or relationships with other entities.
+
+### Data Types
+
+#### Option
+Accepts the following options (no arguments):
+
+ . `required`
+
+ . `unique`
+
+ . `display` it's the field to display when referenced
+from another entity in a relationship 
+(parsed option, there can be only one such field in an entity)
+
+#### Validation
+any validation valid for the field type:
+
+. String:  `minlength(2)`, `maxlength(33)`, `pattern(/[a-zA-z]{7}/)`
+
+ . numbers: `min(1)`, `max(2000)`
+
+ . blobs:  `minbytes(100)`, `maxbytes(2000)`
+
+
+#### Molteplicity
+One of:
+
+ . `ManyToOne` (default if omitted)
+
+ . `OneToMany`
+
+ . `ManyToMany`
+
+ . `OneToOne` eventually followed by <code>with jpaDerivedIdentifier</code>
+
+eventually with `unidirectional` added to each of them;
+
+## Constant
+
+Constants are supported, just use the tag {substitutions} in the first
+line of a note and put a subtitution per line in there with the format:
+```
+KEY=VALUE
+```
+There is no quotes and the first = separates key and value.
+
+These are some useful substitutions:
+```
+EMAIL_PATTERN=^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
+SIX_CHARS=[a-zA-z]{7}
+```
+
+JDL supports number constants so MINLENGTH, MAXLENGTH and such can be 
+used and initialized like that in the JH file (no support here, must be
+done manually):
+```
+MINLENGTH = 20
+```
+
+## Test
+
+The complete graph is available for testing to validate
+it and can eventually be changed before producing the JDL.
+This must be done programmatically by adding specific code. There is
+a kind of pluggable way of acting on it.
