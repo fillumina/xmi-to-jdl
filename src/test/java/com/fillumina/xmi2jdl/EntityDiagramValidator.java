@@ -8,27 +8,19 @@ public class EntityDiagramValidator extends AbstractValidator {
 
     @Override
     void executeTests() {
-        allConnectedToDiscountMustHaveNameField();
+        allConnectedHaveCheck();
         allPricesShouldHaveCreationTime();
         allConnectedToMediaShouldHaveMediaAsField();
         allPricesNotOptionPriceShouldHavePrice();
         allEntitisMustHaveADisplayField();
     }
 
-    void allConnectedToDiscountMustHaveNameField() {
-        test("allConnectedToDiscountMustHaveNameField");
-
-        findEntityByName("Detail").ifPresentOrElse(( Entity detail) -> {
-            detail.getAllRelationships().stream()
-                    .map(e -> e.getOwner())
-                    .filter(e -> e != detail)
-                    .peek(e -> log("checking " + e.getName())) 
-                    .filter(e -> e.getFieldByName("name").isEmpty())
-                    .forEach(e -> error("Entity missing 'name': ", e.getName()));
-
-        }, () -> error("Detail not found!"));
-        
-        endTest();
+    
+    void allConnectedHaveCheck() {
+        allConnectedMustHaveNameField("Detail", "name");
+//        allConnectedMustHaveRelationName("Detail", "detail");
+//        allConnectedMustHaveRelationName("CompactDetail", "compactDetail");
+        allConnectedEntitiesMustHaveRelationNamedTheSame();
     }
 
     void allPricesShouldHaveCreationTime() {

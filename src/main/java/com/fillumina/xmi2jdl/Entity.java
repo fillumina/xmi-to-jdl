@@ -89,9 +89,9 @@ public class Entity implements Comparable<Entity> {
                 .findFirst();
     }
     
-    public Relationship getRelationByName(String name) {
+    public Optional<Relationship> getRelationByName(String name) {
         return allRelationships.stream().filter( d -> d.getName().equals(name))
-                .findFirst().get();
+                .findFirst();
     }
     
     public void appendEntity(Appendable appendable)  {
@@ -113,7 +113,7 @@ public class Entity implements Comparable<Entity> {
                     case OneToOne:
                         if (isOwner) {
                             buf.writeln("1:1 ", r.getAttributeName(), " ---- ", 
-                                    r.getTarget().getName(), r.getValidation());
+                                    r.getTarget().getName(), " ", r.getValidation());
                         } else {
                             buf.writeln("1:1 ---- ", r.getOwner().getName(),
                                     "(", r.getAttributeName(), ") ",
@@ -138,7 +138,7 @@ public class Entity implements Comparable<Entity> {
                         } else {
                             if (isOwner) {
                                 var arrow = r.isUnidirectional() ? " |--> ":" ---> ";
-                                buf.writeln("1:N ", r.getAttributeName(), arrow, 
+                                buf.writeln("N:1 ", r.getAttributeName(), arrow, 
                                         r.getTarget().getName(), r.getValidation());
                             } else {
                                 var arrow = r.isUnidirectional() ? " <--| ":" <--- ";
@@ -160,7 +160,7 @@ public class Entity implements Comparable<Entity> {
                                         r.getTarget().getName(), r.getValidation());
                             } else {
                                 var arrow = r.isUnidirectional() ? " <--| ":" <--- ";
-                                buf.writeln("N:1", arrow, r.getOwner().getName(),
+                                buf.writeln("1:N", arrow, r.getOwner().getName(),
                                         "(", r.getAttributeName(), ") ", 
                                         r.getValidation());
                             }

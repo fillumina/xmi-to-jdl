@@ -20,6 +20,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
     private boolean sameLine;
     private boolean error;
     private int errorCounter;
+    private boolean verbose;
     
     @Override
     public void consume(EntityDiagram entityDiagram) {
@@ -33,6 +34,10 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
     }
 
     abstract void executeTests();
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
     
     protected Optional<Entity> findEntityByName(String name) {
         return entities.values().stream()
@@ -83,6 +88,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
     }
     
     protected void log(String... message) {
+        if (!verbose) return;
         if (sameLine) System.out.println("");
         sameLine = false;
         String msg = Arrays.stream(message).collect(Collectors.joining(" "));
@@ -106,7 +112,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
     }
     
     public void allEntitisMustHaveADisplayField(String ... exempted) {
-        test("allEntitisMustHaveADisplayField");
+        test("all entitis must have a display field");
         
         List<String> exemptedList = Arrays.asList(exempted);
         
@@ -124,6 +130,52 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
                 exemptedList.stream().collect(Collectors.joining(", ")));
         
         endTest();
+    }
+    
+    void allConnectedMustHaveNameField(String entityName, String fieldName) {
+        test("all connected to " + entityName + 
+                " must have field named " + fieldName);
+
+        findEntityByName(entityName).ifPresentOrElse(( Entity detail) -> {
+            detail.getAllRelationships().stream()
+                    .map(e -> e.getOwner())
+                    .filter(e -> e != detail)
+                    .peek(e -> log("checking " + e.getName())) 
+                    .filter(e -> e.getFieldByName(fieldName).isEmpty())
+                    .forEach(e -> error("Entity missing '" + fieldName + 
+                            "': ", e.getName()));
+
+        }, () -> error(entityName + " not found!"));
+        
+        endTest();
+    }
+    
+    void allConnectedMustHaveRelationName(String entityName, String fieldName) {
+        test("all connected to " + entityName + 
+                " must have the relation named " + fieldName);
+
+        findEntityByName(entityName).ifPresentOrElse(( Entity detail) -> {
+            detail.getAllRelationships().stream()
+                    .map(r -> r.getOwner())
+                    .filter(e -> e != detail)
+                    .peek(e -> log("checking " + e.getName())) 
+                    .filter(e -> e.getRelationByName(fieldName).isEmpty())
+                    .forEach(e -> error("Entity missing '" + fieldName + 
+                            "': ", e.getName()));
+
+        }, () -> error(entityName + " not found!"));
+        
+        endTest();
+    }
+    
+    void allConnectedEntitiesMustHaveRelationNamedTheSame() {
+        
+        entities.values().forEach(e -> {
+            String entityName = e.getName();
+            String fieldName = "" + Character.toLowerCase(entityName.charAt(0)) +
+                    entityName.substring(1);
+            allConnectedMustHaveRelationName(entityName, fieldName);
+        });
     }
     
     // TODO warning for lone Entity or linked by only one
