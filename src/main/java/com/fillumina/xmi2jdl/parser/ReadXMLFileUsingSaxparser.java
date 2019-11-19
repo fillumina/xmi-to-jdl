@@ -98,7 +98,8 @@ public class ReadXMLFileUsingSaxparser
                 case "UML:EnumerationLiteral":
                     {
                         String name = attributes.getValue("name");
-                        currentEnumeration.addLiteral(name);
+                        String comment = attributes.getValue("comment");
+                        currentEnumeration.addLiteral(name, comment);
                         break;
                     }
                     

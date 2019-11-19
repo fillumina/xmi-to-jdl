@@ -67,10 +67,12 @@ public class EntityDiagramValidator extends AbstractValidator {
 
         findEntityByName("MediaContent").ifPresentOrElse(( Entity media) -> {
             media.getAllRelationships().stream()
-                    .filter(e -> e.getOwner() != media)
+                    .filter(e -> e.getOwner() != media && 
+                            !e.getOwner().getName().equals("MimeData"))
                     .peek(e -> log("checking " + e.getOwner().getName(), e.getName())) 
                     .filter(e -> !e.getName().equals("media"))
-                    .forEach(e -> error("Entity missing 'media': ", e.getName()));
+                    .forEach(e -> error("Entity", e.getOwner().getName(), 
+                            "missing 'media':", e.getName()));
 
         }, () -> error("MediaContent not found!"));
         

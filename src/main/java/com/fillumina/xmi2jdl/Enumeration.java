@@ -9,7 +9,17 @@ import java.util.List;
  */
 public class Enumeration extends DataType implements Comparable<Enumeration> {
 
-    private final List<String> values = new ArrayList<>();
+    private static class Literal {
+        final String value;
+        final String comment;
+
+        public Literal(String name, String comment) {
+            this.value = name.trim().toUpperCase();
+            this.comment = comment;
+        }
+    }
+    
+    private final List<Literal> literals = new ArrayList<>();
 
 
     public Enumeration(String name, String id, 
@@ -18,26 +28,27 @@ public class Enumeration extends DataType implements Comparable<Enumeration> {
         super(id, name, comment, validation);
     }
 
-    public void addLiteral(String literal) {
-        values.add(literal.trim().toUpperCase());
+    public void addLiteral(String name, String comment) {
+        literals.add(new Literal(name, comment));
     }
 
     public void appendEnumeration(Appendable appendable) {
         var buf = new AppendableWrapper(appendable);
         
-        String comment = getComment();
+        var comment = getComment();
         buf.ifNotNull(comment).writeln("/** ", comment, " */");
 
-        buf.writeln("enum ", getName(), " {").write('\t');
+        buf.writeln("enum ", getName(), " {");
 
         boolean first = true;
-        for (String s : values) {
+        for (Literal l : literals) {
             if (!first) {
-                buf.write(", ");
+                buf.writeln(", ");
             } else {
                 first = false;
             }
-            buf.write(s);
+            buf.ifNotNull(l.comment).writeln("\t/** ", l.comment, " */");
+            buf.write("\t", l.value);
         }
 
         buf.writeln().writeln("}").writeln().writeln();
