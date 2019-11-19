@@ -1,5 +1,9 @@
 package com.fillumina.xmi2jdl;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  *
  * @author fra
@@ -12,6 +16,7 @@ public class EntityDiagramValidator extends AbstractValidator {
         allPricesShouldHaveCreationTime();
         allConnectedToMediaShouldHaveMediaAsField();
         allPricesNotOptionPriceShouldHavePrice();
+        allEntitisMustHaveADisplayField();
     }
 
     void allConnectedToDiscountMustHaveNameField() {
@@ -55,7 +60,7 @@ public class EntityDiagramValidator extends AbstractValidator {
                     .filter( dt -> dt.getName().equals("price"))
                     .count();
             if (count == 0) {
-                error("Price missing 'price':", e.getName());
+                error("Missing 'price':", e.getName());
             }
         });
         
@@ -77,5 +82,15 @@ public class EntityDiagramValidator extends AbstractValidator {
         }, () -> error("MediaContent not found!"));
         
         endTest();
+    }
+
+    void allEntitisMustHaveADisplayField() {
+        super.allEntitisMustHaveADisplayField(
+            "Contact", "OrderOptionItem", "ColorSizeVariant", 
+            "Tag", "OrderStatusType", "CustomizationOption",
+            "OrderStatus", "Material", "OrderAreaCustomization",
+            "OrderAreaCustomization", "MediaContent", 
+            "ColorVariant", "User", "OrderProduct"
+        );
     }
 }

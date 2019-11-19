@@ -21,11 +21,11 @@ public class AppendableWrapper {
         this.appendable = appendable;
     }
     
-    public AppendableWrapper write(String ... array) {
+    public AppendableWrapper write(Object ... array) {
         if (appendable == null) return this;
         try {
-            for (String s: array) {
-                appendable.append(s);
+            for (Object o: array) {
+                appendable.append(Objects.toString(o));
                 used = true;
             }
         } catch (IOException e) {
@@ -61,17 +61,6 @@ public class AppendableWrapper {
                 appendable.append(Objects.toString(s));
             }
             appendable.append(System.lineSeparator());
-            used = true;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return this;
-    }
-    
-    public AppendableWrapper write(char c) {
-        if (appendable == null) return this;
-        try {
-            appendable.append(c);
             used = true;
         } catch (IOException e) {
             throw new RuntimeException(e);

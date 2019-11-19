@@ -18,17 +18,16 @@ to be added to JDL.
 ## Entity
 
 The following options (no parameters) can be added in curly braces in the
-comment of any Entity.
+comment of any Entity (these are all parsed options).
 
  . `skipClient` doesn't build the client
 
  . `skipServer` doesn't build the server
 
  . `filter` adds advanced search filters to the server API
-(parsed option)
 
  . `pagination` or `infinite-scroll` pagination types
-(parsed option)
+
 
 ## Attribute
 Attributes can be simple data types (such as String, LocalDate, Integer...)
@@ -72,22 +71,22 @@ eventually with `unidirectional` added to each of them;
 
 ## Constant
 
-Constants are supported, just use the tag {substitutions} in the first
-line of a note and put a subtitution per line in there with the format:
+Constants are supported, just use the tag `{substitutions}` in the first
+line of a note and put a substitution per line in there with the format:
 ```
 KEY=VALUE
 ```
-There is no quotes and the first = separates key and value.
+There are no quotes and the first `=` separates key and value.
 
 These are some useful substitutions:
 ```
 EMAIL_PATTERN=^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
-SIX_CHARS=[a-zA-z]{7}
+SIX_ALPHA=[a-zA-z]{7}
 ```
 
 JDL supports number constants so MINLENGTH, MAXLENGTH and such can be 
 used and initialized like that in the JH file (no support here, must be
-done manually):
+added manually):
 ```
 MINLENGTH = 20
 ```
@@ -97,4 +96,5 @@ MINLENGTH = 20
 The complete graph is available for testing to validate
 it and can eventually be changed before producing the JDL.
 This must be done programmatically by adding specific code. There is
-a kind of pluggable way of acting on it.
+a kind of pluggable way of acting on it. Testing a graph is 
+a very good way to avoid mistakes in case of many entities.

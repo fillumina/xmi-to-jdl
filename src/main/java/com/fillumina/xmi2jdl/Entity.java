@@ -54,6 +54,23 @@ public class Entity implements Comparable<Entity> {
         return comment;
     }
 
+    public Pagination getPagination() {
+        return pagination;
+    }
+
+    public boolean isFilter() {
+        return filter;
+    }
+
+    public boolean isSkipServer() {
+        return skipServer;
+    }
+
+    public boolean isSkipClient() {
+        return skipClient;
+    }
+
+    
     public List<DataTypeRef> getDataTypes() {
         return dataTypes;
     }
