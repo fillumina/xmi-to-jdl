@@ -23,12 +23,12 @@ public class Relationship extends Reference {
         this.target = target;
         this.attributeName = attributeName;
 
-        String v = getValidation();
-        if (v == null) {
+        if (validation == null) {
             this.validation = null;
             this.unidirectional = false;
             this.relationship = RelationshipType.OneToMany;
         } else {
+            String v = validation;
             RelationshipType rel = RelationshipType.ManyToOne;
             for (RelationshipType r : RelationshipType.values()) {
                 if (v.contains(r.name())) {
@@ -48,6 +48,11 @@ public class Relationship extends Reference {
         }
     }
 
+    @Override
+    public String getValidation() {
+        return this.validation;
+    }
+    
     public RelationshipType getRelationshipType() {
         return relationship;
     }
@@ -67,7 +72,7 @@ public class Relationship extends Reference {
     public boolean isUnidirectional() {
         return unidirectional;
     }
-
+    
     @Override
     public void append(Appendable appendable) {
         var buf = new AppendableWrapper(appendable);

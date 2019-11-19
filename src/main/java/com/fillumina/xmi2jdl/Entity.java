@@ -102,6 +102,84 @@ public class Entity implements Comparable<Entity> {
 
         var buf = new AppendableWrapper(appendable);
 
+        if (!allRelationships.isEmpty() || comment != null) {
+            buf.writeln("/*");
+            
+            buf.ifNotNull(comment).writeln(comment).writeln();
+            
+            allRelationships.stream().forEach(r -> {
+                boolean isOwner = r.getOwner() == this;
+                switch (r.getRelationshipType()) {
+                    case OneToOne:
+                        if (isOwner) {
+                            buf.writeln("1:1 ", r.getAttributeName(), " ---- ", 
+                                    r.getTarget().getName(), r.getValidation());
+                        } else {
+                            buf.writeln("1:1 ---- ", r.getOwner().getName(),
+                                    "(", r.getAttributeName(), ") ",
+                                    r.getValidation());
+                        }
+                        break;
+                    case ManyToMany:
+                        if (isOwner) {
+                            buf.writeln("N:N ", r.getAttributeName(), " <--> ", 
+                                    r.getTarget().getName(), r.getValidation());
+                        } else {
+                            buf.writeln("N:N <--> ", r.getOwner().getName(),
+                                    "(", r.getAttributeName(), ") ",
+                                    r.getValidation());
+                        }
+                        break;
+                    case OneToMany:
+                        if (isOwner && r.getTarget() == this) {
+                            buf.writeln("1:N ", r.getAttributeName(), 
+                                    "(self reference) ", r.getValidation());
+                            
+                        } else {
+                            if (isOwner) {
+                                var arrow = r.isUnidirectional() ? " |--> ":" ---> ";
+                                buf.writeln("1:N ", r.getAttributeName(), arrow, 
+                                        r.getTarget().getName(), r.getValidation());
+                            } else {
+                                var arrow = r.isUnidirectional() ? " <--| ":" <--- ";
+                                buf.writeln("1:N", arrow, r.getOwner().getName(),
+                                        "(", r.getAttributeName(), ") "
+                                        , r.getValidation());
+                            }
+                        }
+                        break;
+                    case ManyToOne:
+                        if (isOwner && r.getTarget() == this) {
+                            buf.writeln("N:1 ", r.getAttributeName(),
+                                    "(self reference)");
+                            
+                        } else {
+                            if (isOwner) {
+                                var arrow = r.isUnidirectional() ? " |--> ":" ---> ";
+                                buf.writeln("N:1 ", r.getAttributeName(), arrow, 
+                                        r.getTarget().getName(), r.getValidation());
+                            } else {
+                                var arrow = r.isUnidirectional() ? " <--| ":" <--- ";
+                                buf.writeln("N:1", arrow, r.getOwner().getName(),
+                                        "(", r.getAttributeName(), ") ", 
+                                        r.getValidation());
+                            }
+                        }
+                        break;
+                }
+            });
+            
+            if (filter || pagination != null || skipClient || skipServer) {
+                buf.write("ATTR: ");
+                buf.ifNotNull(getPagination()).write(getPagination(), " ");
+                buf.ifTrue(filter).write("filter ");
+                buf.ifTrue(skipClient).write("skipClient ");
+                buf.ifTrue(skipServer).write("skipServer ");
+                buf.writeln();
+            }
+            buf.writeln("*/");
+        }
+
         buf.ifTrue(skipClient).writeln("@skipClient");
         buf.ifTrue(skipServer).writeln("@skipServer");
         buf.ifTrue(filter).writeln("@filter");
@@ -110,10 +188,8 @@ public class Entity implements Comparable<Entity> {
             buf.writeln("@paginate(", pagination.getValue(), ")");
         }
 
-        buf.ifNotNull(comment).writeln("/** ", comment, " */");
-
         buf.write("entity ", name);
-
+        
         if (hasDataTypeAttributes()) {
             buf.writeln(" {");
             dataTypes.forEach(r -> r.append(buf.getAppendable()));

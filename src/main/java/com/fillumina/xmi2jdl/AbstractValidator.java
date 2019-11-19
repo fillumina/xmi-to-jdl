@@ -126,4 +126,5 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         endTest();
     }
     
+    // TODO warning for lone Entity or linked by only one
 }

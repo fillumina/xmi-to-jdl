@@ -75,9 +75,10 @@ class ParsedEntity {
                             a.getAttributeName(), 
                             cp.getComment(), cp.getValidation() );
                     ownedRelations.add(entityRef);
-                    
                     allRelations.add(entityRef);
-                    target.addRelationship(entityRef);
+                    if (target.entity != entity) {
+                        target.addRelationship(entityRef);
+                    }
                 } else {
                     throw new RuntimeException(
                             "Referred entity not found for attribute '" +

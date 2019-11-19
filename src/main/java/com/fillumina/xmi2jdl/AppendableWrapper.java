@@ -25,7 +25,9 @@ public class AppendableWrapper {
         if (appendable == null) return this;
         try {
             for (Object o: array) {
-                appendable.append(Objects.toString(o));
+                if (o != null) {
+                    appendable.append(Objects.toString(o));
+                }
                 used = true;
             }
         } catch (IOException e) {
@@ -57,8 +59,10 @@ public class AppendableWrapper {
     public AppendableWrapper writeln(Object ... array) {
         if (appendable == null) return this;
         try {
-            for (Object s: array) {
-                appendable.append(Objects.toString(s));
+            for (Object o: array) {
+                if (o != null) {
+                    appendable.append(Objects.toString(o));
+                }
             }
             appendable.append(System.lineSeparator());
             used = true;

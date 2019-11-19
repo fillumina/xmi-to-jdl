@@ -1,9 +1,5 @@
 package com.fillumina.xmi2jdl;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  *
  * @author fra
@@ -90,7 +86,8 @@ public class EntityDiagramValidator extends AbstractValidator {
             "Tag", "OrderStatusType", "CustomizationOption",
             "OrderStatus", "Material", "OrderAreaCustomization",
             "OrderAreaCustomization", "MediaContent", 
-            "ColorVariant", "User", "OrderProduct"
+            "ColorVariant", "User", "OrderProduct",
+            "OrderOptionCustomization"
         );
     }
 }

@@ -36,9 +36,9 @@ public class DataTypeRef extends Reference {
     public void append(Appendable appendable) {
         var buf = new AppendableWrapper(appendable);
         var comment = getComment();
-        if (comment != null) {
-            buf.writeln("\t/** ", comment, " */");
-        }
+        
+        buf.ifNotNull(comment).writeln("\t/** ", comment, " */");
+        buf.ifTrue(display).writeln("\t// display");
 
         buf.write("\t", getName(), " ", dataType.toString());
 
