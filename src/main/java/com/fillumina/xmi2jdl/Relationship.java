@@ -108,6 +108,70 @@ public class Relationship extends Reference {
         buf.writeln();
     }
 
+    public void appendDetail(Entity owner, Appendable appendable) {
+        var buf = new AppendableWrapper(appendable);
+        boolean isOwner = getOwner() == owner;
+        switch (getRelationshipType()) {
+            case OneToOne:
+                if (isOwner) {
+                    buf.writeln("1:1 ", getAttributeName(), " ---- ", 
+                            getTarget().getName(), " ", getValidation());
+                } else {
+                    buf.writeln("1:1 ---- ", getOwner().getName(),
+                            "(", getAttributeName(), ") ",
+                            getValidation());
+                }
+                break;
+            case ManyToMany:
+                if (isOwner) {
+                    buf.writeln("N:N ", getAttributeName(), " <--> ", 
+                            getTarget().getName(), getValidation());
+                } else {
+                    buf.writeln("N:N <--> ", getOwner().getName(),
+                            "(", getAttributeName(), ") ",
+                            getValidation());
+                }
+                break;
+            case OneToMany:
+                if (isOwner && getTarget() == owner) {
+                    buf.writeln("1:N ", getAttributeName(), 
+                            "(self reference) ", getValidation());
+
+                } else {
+                    if (isOwner) {
+                        var arrow = isUnidirectional() ? " |--> ":" ---> ";
+                        buf.writeln("N:1 ", getAttributeName(), arrow, 
+                                getTarget().getName(), getValidation());
+                    } else {
+                        var arrow = isUnidirectional() ? " <--| ":" <--- ";
+                        buf.writeln("1:N", arrow, getOwner().getName(),
+                                "(", getAttributeName(), ") "
+                                , getValidation());
+                    }
+                }
+                break;
+            case ManyToOne:
+                if (isOwner && getTarget() == owner) {
+                    buf.writeln("N:1 ", getAttributeName(),
+                            "(self reference)");
+
+                } else {
+                    if (isOwner) {
+                        var arrow = isUnidirectional() ? " |--> ":" ---> ";
+                        buf.writeln("N:1 ", getAttributeName(), arrow, 
+                                getTarget().getName(), getValidation());
+                    } else {
+                        var arrow = isUnidirectional() ? " <--| ":" <--- ";
+                        buf.writeln("1:N", arrow, getOwner().getName(),
+                                "(", getAttributeName(), ") ", 
+                                getValidation());
+                    }
+                }
+                break;
+        }
+        
+    }
+    
     private String objName(Entity owner) {
         return Character.toLowerCase(owner.getName().charAt(0)) +
                 owner.getName().substring(1);

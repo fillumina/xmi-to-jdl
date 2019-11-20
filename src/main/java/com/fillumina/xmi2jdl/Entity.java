@@ -107,67 +107,11 @@ public class Entity implements Comparable<Entity> {
             
             buf.ifNotNull(comment).writeln(comment).writeln();
             
-            allRelationships.stream().forEach(r -> {
-                boolean isOwner = r.getOwner() == this;
-                switch (r.getRelationshipType()) {
-                    case OneToOne:
-                        if (isOwner) {
-                            buf.writeln("1:1 ", r.getAttributeName(), " ---- ", 
-                                    r.getTarget().getName(), " ", r.getValidation());
-                        } else {
-                            buf.writeln("1:1 ---- ", r.getOwner().getName(),
-                                    "(", r.getAttributeName(), ") ",
-                                    r.getValidation());
-                        }
-                        break;
-                    case ManyToMany:
-                        if (isOwner) {
-                            buf.writeln("N:N ", r.getAttributeName(), " <--> ", 
-                                    r.getTarget().getName(), r.getValidation());
-                        } else {
-                            buf.writeln("N:N <--> ", r.getOwner().getName(),
-                                    "(", r.getAttributeName(), ") ",
-                                    r.getValidation());
-                        }
-                        break;
-                    case OneToMany:
-                        if (isOwner && r.getTarget() == this) {
-                            buf.writeln("1:N ", r.getAttributeName(), 
-                                    "(self reference) ", r.getValidation());
-                            
-                        } else {
-                            if (isOwner) {
-                                var arrow = r.isUnidirectional() ? " |--> ":" ---> ";
-                                buf.writeln("N:1 ", r.getAttributeName(), arrow, 
-                                        r.getTarget().getName(), r.getValidation());
-                            } else {
-                                var arrow = r.isUnidirectional() ? " <--| ":" <--- ";
-                                buf.writeln("1:N", arrow, r.getOwner().getName(),
-                                        "(", r.getAttributeName(), ") "
-                                        , r.getValidation());
-                            }
-                        }
-                        break;
-                    case ManyToOne:
-                        if (isOwner && r.getTarget() == this) {
-                            buf.writeln("N:1 ", r.getAttributeName(),
-                                    "(self reference)");
-                            
-                        } else {
-                            if (isOwner) {
-                                var arrow = r.isUnidirectional() ? " |--> ":" ---> ";
-                                buf.writeln("N:1 ", r.getAttributeName(), arrow, 
-                                        r.getTarget().getName(), r.getValidation());
-                            } else {
-                                var arrow = r.isUnidirectional() ? " <--| ":" <--- ";
-                                buf.writeln("1:N", arrow, r.getOwner().getName(),
-                                        "(", r.getAttributeName(), ") ", 
-                                        r.getValidation());
-                            }
-                        }
-                        break;
-                }
-            });
+            for (var relationship : RelationshipType.values()) {
+                allRelationships.stream()
+                        .filter(r -> r.getRelationshipType() == relationship)
+                        .forEach(r -> r.appendDetail(this, appendable));
+            }
             
             if (filter || pagination != null || skipClient || skipServer) {
                 buf.write("ATTR: ");
