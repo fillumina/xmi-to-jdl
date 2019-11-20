@@ -13,7 +13,7 @@ public class AppTest {
 
     private static final String FILENAME =
         "/home/fra/Development/Work/Emporia/ClassDiagram/"
-            + "extended_class_diagram_final_27.xmi";
+            + "extended_class_diagram_final_28.xmi";
     
     public static void main(String[] args) throws IOException, SAXException,
             ParserConfigurationException {

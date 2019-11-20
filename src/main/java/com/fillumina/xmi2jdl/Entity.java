@@ -1,5 +1,6 @@
 package com.fillumina.xmi2jdl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -106,6 +107,8 @@ public class Entity implements Comparable<Entity> {
             buf.writeln("/*");
             
             buf.ifNotNull(comment).writeln(comment).writeln();
+
+            Collections.sort(this.allRelationships);
             
             for (var relationship : RelationshipType.values()) {
                 allRelationships.stream()

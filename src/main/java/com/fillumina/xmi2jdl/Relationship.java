@@ -4,7 +4,7 @@ package com.fillumina.xmi2jdl;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class Relationship extends Reference {
+public class Relationship extends Reference implements Comparable<Relationship> {
 
     private final Entity owner;
     private final Entity target;
@@ -182,6 +182,15 @@ public class Relationship extends Reference {
         StringBuilder buf = new StringBuilder();
         append(buf);
         return buf.toString();
+    }
+
+    @Override
+    public int compareTo(Relationship o) {
+        if (getOwner().equals(o.getOwner())) {
+            return getTarget().getName().compareTo(o.getTarget().getName());
+        } else {
+            return getOwner().getName().compareTo(o.getOwner().getName());
+        }
     }
     
 }
