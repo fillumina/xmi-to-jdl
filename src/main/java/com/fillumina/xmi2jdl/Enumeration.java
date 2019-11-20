@@ -14,6 +14,7 @@ public class Enumeration extends DataType implements Comparable<Enumeration> {
         final String comment;
 
         public Literal(String name, String comment) {
+            // Enum values are always UPPER CASE in JDL
             this.value = name.trim().toUpperCase();
             this.comment = comment;
         }
@@ -24,7 +25,6 @@ public class Enumeration extends DataType implements Comparable<Enumeration> {
 
     public Enumeration(String name, String id, 
             String comment, String validation) {
-        // Enum values are always UPPER CASE in JDL
         super(id, name, comment, validation);
     }
 

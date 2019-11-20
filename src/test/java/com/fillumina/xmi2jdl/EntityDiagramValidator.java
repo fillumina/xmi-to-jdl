@@ -17,6 +17,8 @@ public class EntityDiagramValidator extends AbstractValidator {
 
     
     void allConnectedHaveCheck() {
+        setVerbose(true);
+        
         allConnectedMustHaveNameField("Detail", "name");
 //        allConnectedMustHaveRelationName("Detail", "detail");
 //        allConnectedMustHaveRelationName("CompactDetail", "compactDetail");
