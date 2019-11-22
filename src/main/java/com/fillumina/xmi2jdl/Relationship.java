@@ -158,7 +158,7 @@ public class Relationship extends Reference implements Comparable<Relationship> 
                                 getTarget().getName());
                     } else {
                         var arrow = isUnidirectional() ? " <--| ":" <--- ";
-                        buf.writeln("1:N", arrow, getOwner().getName(),
+                        buf.write("1:N", arrow, getOwner().getName(),
                                 "(", getAttributeName(), ") ");
                     }
                 }

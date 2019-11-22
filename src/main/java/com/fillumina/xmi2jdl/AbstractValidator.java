@@ -52,6 +52,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
     }
 
     private void startTests() {
+        System.out.println("/*");
         System.out.println("Executing Validator");
     }
 
@@ -64,6 +65,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
             System.out.print(", " + errorCounter + " ERRORS FOUND!");
         }
         System.out.println("");
+        System.out.println("*/");
     }
     
     protected void test(String name) {
