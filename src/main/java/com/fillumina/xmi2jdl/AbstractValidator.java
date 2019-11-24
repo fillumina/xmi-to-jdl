@@ -1,9 +1,11 @@
 package com.fillumina.xmi2jdl;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
     private boolean sameLine;
     private boolean error;
     private int errorCounter;
+    private int warningCounter;
     private boolean verbose;
     
     @Override
@@ -61,8 +64,11 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         sameLine = false;
         System.out.println("");
         System.out.print("End Validator");
+        if (warningCounter > 0) {
+            System.out.print(", " + warningCounter + " WARNINGS FOUND");
+        }
         if (errorCounter > 0) {
-            System.out.print(", " + errorCounter + " ERRORS FOUND!");
+            System.out.print(", " + errorCounter + " ERRORS FOUND");
         }
         System.out.println("");
         System.out.println("*/");
@@ -100,6 +106,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
     protected void warning(String... message) {
         if (sameLine) System.out.println("");
         sameLine = false;
+        warningCounter++;
         String msg = Arrays.stream(message).collect(Collectors.joining(" "));
         System.out.println("\tWARNING: " + msg);
     }
@@ -113,7 +120,20 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         System.out.println("\tERROR: " + msg);
     }
     
-    public void allEntitisMustHaveADisplayField(String ... exempted) {
+
+    void forbiddenEntityNameCheck(String ... names) {
+        test("forbiddenEntityNameCheck");
+
+        Arrays.asList(names).forEach(n -> {
+            if (!findEntitiesByRegexp(n).isEmpty()) {
+                error("Bad name for entity '", n , "'");
+            }
+        });
+        
+        endTest();
+    }
+    
+    public void allEntitisMustHaveADisplayFieldExcept(String ... exempted) {
         test("all entitis must have a display field");
         
         List<String> exemptedList = Arrays.asList(exempted);
@@ -151,15 +171,26 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         
         endTest();
     }
+        
+    void allConnectedEntitiesMustHaveRelationNamedTheSame() {
+        
+        entities.values().forEach(e -> {
+            String entityName = e.getName();
+            String fieldName = "" + Character.toLowerCase(entityName.charAt(0)) +
+                    entityName.substring(1);
+            allConnectedMustHaveRelationName(entityName, fieldName);
+        });
+    }
     
     void allConnectedMustHaveRelationName(String entityName, String fieldName) {
         test("all connected to " + entityName + 
                 " must have the relation named " + fieldName);
 
-        findEntityByName(entityName).ifPresentOrElse(( Entity detail) -> {
-            detail.getAllRelationships().stream()
+        findEntityByName(entityName).ifPresentOrElse(( Entity entity) -> {
+            entity.getAllRelationships().stream()
+                    .filter(r -> !r.getRelationshipType().equals(RelationshipType.OneToMany))
                     .map(r -> r.getOwner())
-                    .filter(e -> e != detail)
+                    .filter(e -> e != entity)
                     .peek(e -> log("checking " + e.getName())) 
                     .filter(e -> e.getRelationByName(fieldName).isEmpty())
                     .forEach(e -> error("Entity missing '" + fieldName + 
@@ -170,13 +201,18 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         endTest();
     }
     
-    void allConnectedEntitiesMustHaveRelationNamedTheSame() {
+    void noCircularOneToOneWithMapIdRelationships() {
+        test("test circular 1 to 1 with @MapId");
         
         entities.values().forEach(e -> {
+            Set<Entity> equalIdSet = new HashSet<>();
             String entityName = e.getName();
-            String fieldName = "" + Character.toLowerCase(entityName.charAt(0)) +
-                    entityName.substring(1);
-            allConnectedMustHaveRelationName(entityName, fieldName);
+            e.getMapIdConnectedEntityList().forEach(c -> {
+                if (equalIdSet.contains(c)) {
+                    error("circular @MapId with ", e.getName(), " and ", c.getName());
+                }
+                equalIdSet.add(c);
+            });
         });
     }
     

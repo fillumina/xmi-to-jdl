@@ -8,23 +8,18 @@ public class EntityDiagramValidator extends AbstractValidator {
 
     @Override
     void executeTests() {
-        allConnectedHaveCheck();
-        allPricesShouldHaveCreationTime();
-        allConnectedToMediaShouldHaveMediaAsField();
-        allPricesNotOptionPriceShouldHavePrice();
-        allEntitisMustHaveADisplayField();
-    }
-
-    
-    void allConnectedHaveCheck() {
         setVerbose(true);
         
-        allConnectedMustHaveNameField("Detail", "name");
-//        allConnectedMustHaveRelationName("Detail", "detail");
-//        allConnectedMustHaveRelationName("CompactDetail", "compactDetail");
+        allPricesShouldHaveCreationTime();
+        allPricesNotOptionPriceShouldHavePrice();
+        //allEntitisMustHaveADisplayField();
+        
+        allEntitisMustHaveADisplayFieldExcept();
+        forbiddenEntityNameCheck("Order", ".*Detail", "UserAuthority");
         allConnectedEntitiesMustHaveRelationNamedTheSame();
+        noCircularOneToOneWithMapIdRelationships();
     }
-
+    
     void allPricesShouldHaveCreationTime() {
         test("allPricesShouldHaveCreationTime");
 
@@ -57,31 +52,14 @@ public class EntityDiagramValidator extends AbstractValidator {
         endTest();
     }
 
-    void allConnectedToMediaShouldHaveMediaAsField() {
-        test("allConnectedToMediaShouldHaveMediaAsField");
-
-        findEntityByName("MediaContent").ifPresentOrElse(( Entity media) -> {
-            media.getAllRelationships().stream()
-                    .filter(e -> e.getOwner() != media && 
-                            !e.getOwner().getName().equals("MimeData"))
-                    .peek(e -> log("checking " + e.getOwner().getName(), e.getName())) 
-                    .filter(e -> !e.getName().equals("media"))
-                    .forEach(e -> error("Entity", e.getOwner().getName(), 
-                            "missing 'media':", e.getName()));
-
-        }, () -> error("MediaContent not found!"));
-        
-        endTest();
-    }
-
-    void allEntitisMustHaveADisplayField() {
-        super.allEntitisMustHaveADisplayField(
-            "Contact", "OrderOptionItem", "ColorSizeVariant", 
-            "Tag", "OrderStatusType", "CustomizationOption",
-            "OrderStatus", "Material", "OrderAreaCustomization",
-            "OrderAreaCustomization", "MediaContent", 
-            "ColorVariant", "User", "OrderProduct",
-            "OrderOptionCustomization"
-        );
-    }
+//    void allEntitisMustHaveADisplayField() {
+//        super.allEntitisMustHaveADisplayFieldExcept(
+//            "Contact", "OrderOptionItem", "ColorSizeVariant", 
+//            "Tag", "OrderStatusType", "CustomizationOption",
+//            "OrderStatus", "Material", "OrderAreaCustomization",
+//            "OrderAreaCustomization", "MediaContent", 
+//            "ColorVariant", "User", "OrderProduct",
+//            "OrderOptionCustomization"
+//        );
+//    }
 }

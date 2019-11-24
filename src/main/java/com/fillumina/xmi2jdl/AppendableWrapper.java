@@ -2,6 +2,7 @@ package com.fillumina.xmi2jdl;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  *
@@ -49,6 +50,10 @@ public class AppendableWrapper {
         return ifTrue(used);
     }
     
+    public AppendableWrapper ifFalse(boolean clause) {
+        return ifTrue(!clause);
+    }
+    
     public AppendableWrapper ifTrue(boolean clause) {
         if (clause) {
             return this;
@@ -74,5 +79,16 @@ public class AppendableWrapper {
     
     public Appendable getAppendable() {
         return appendable;
+    }
+    
+    public AppendableWrapper append(Consumer<Appendable> consumer) {
+        StringBuilder buf = new StringBuilder();
+        consumer.accept(buf);
+        try {
+            appendable.append(buf.toString());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        return this;
     }
 }

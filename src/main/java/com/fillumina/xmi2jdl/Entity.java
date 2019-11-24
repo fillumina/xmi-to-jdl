@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -113,7 +114,7 @@ public class Entity implements Comparable<Entity> {
             for (var relationship : RelationshipType.values()) {
                 allRelationships.stream()
                         .filter(r -> r.getRelationshipType() == relationship)
-                        .forEach(r -> r.appendDetail(this, appendable));
+                        .forEach(r -> r.appendDetailLn(this, appendable));
             }
             
             if (filter || pagination != null || skipClient || skipServer) {
@@ -144,7 +145,7 @@ public class Entity implements Comparable<Entity> {
         }
         buf.writeln().writeln();
     }
-
+    
     public void appendRelationship(RelationshipType rel , Appendable appendable) {
         // User & Authority are provided by JHipster
         if ("User".equals(name) || "Authority".equals(name)) {
@@ -181,6 +182,15 @@ public class Entity implements Comparable<Entity> {
         return !dataTypes.isEmpty();
     }
 
+    public List<Entity> getMapIdConnectedEntityList() {
+        return ownedRelationships.stream()
+                .filter(r -> r.getOwner() == this && 
+                        r.getValidation() != null &&
+                        r.getValidation().contains("with jpaDerivedIdentifier"))
+                .map(r -> r.getTarget())
+                .collect(Collectors.toList());
+    }
+    
     public String getDisplayField() {
         for (Reference r : dataTypes) {
             if (((DataTypeRef)r).isDisplay()) {

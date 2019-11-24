@@ -17,8 +17,10 @@ public class AppTest {
     
     public static void main(String[] args) throws IOException, SAXException,
             ParserConfigurationException {
+        System.out.println("/*");
         System.out.println("\n\nFile: " + FILENAME);
         System.out.println("Date: " + (new Date().toString()) + "\n\n");
+        System.out.println("*/");
         
         InputStream inputStream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream("class-diagram.xmi");

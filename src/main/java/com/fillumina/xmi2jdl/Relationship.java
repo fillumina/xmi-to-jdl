@@ -1,5 +1,7 @@
 package com.fillumina.xmi2jdl;
 
+import java.io.IOException;
+
 /**
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
@@ -12,6 +14,7 @@ public class Relationship extends Reference implements Comparable<Relationship> 
     private final String validation;
     private final RelationshipType relationship;
     private final boolean unidirectional;
+    private final boolean invertedOneToMany;
 
     public Relationship(Entity owner,
             Entity target,
@@ -19,23 +22,35 @@ public class Relationship extends Reference implements Comparable<Relationship> 
             String comment, 
             String validation) {
         super(attributeName, comment, validation);
-        this.owner = owner;
-        this.target = target;
         this.attributeName = attributeName;
 
         if (validation == null) {
             this.validation = null;
             this.unidirectional = false;
             this.relationship = RelationshipType.OneToMany;
+            this.owner = target;
+            this.target = owner;
+            this.invertedOneToMany = true;
         } else {
             String v = validation;
-            RelationshipType rel = RelationshipType.ManyToOne;
+            RelationshipType rel = null;
             for (RelationshipType r : RelationshipType.values()) {
                 if (v.contains(r.name())) {
                     v = v.replace(r.name(), "").trim();
                     rel = r;
                     break;
                 }
+            }
+            if (rel == null) {
+                this.relationship = RelationshipType.OneToMany;
+                this.invertedOneToMany = true;
+                this.owner = target;
+                this.target = owner;
+            } else {
+                this.relationship = rel;
+                this.invertedOneToMany = false;
+                this.owner = owner;
+                this.target = target;
             }
             if (v.contains("unidirectional")) {
                 v = v.replace("unidirectional", "");
@@ -44,7 +59,6 @@ public class Relationship extends Reference implements Comparable<Relationship> 
                 this.unidirectional = false;
             }
             this.validation = v;
-            this.relationship = rel;
         }
     }
 
@@ -81,25 +95,21 @@ public class Relationship extends Reference implements Comparable<Relationship> 
             buf.writeln("\t/** ", c, " */");
         }
 
-        if (unidirectional) {
-            var targetDisplayField = target.getDisplayField();
-            buf.write("\t", owner.getName(), "{", attributeName);
-            buf.ifNotNull(targetDisplayField).write("(", targetDisplayField, ")");
-            buf.write("} to ", target.getName());
-            
-        } else {
+        var ownerAttr = invertedOneToMany ? objName(target) : attributeName;
+        var targetAttr = invertedOneToMany ? attributeName : objName(owner);
+        
+        buf.write("\t/* ", owner.getName(), " ")
+                .append(a -> appendDetail(owner, a)).writeln(" */");
+        
+        buf.write("\t", owner.getName(), "{", ownerAttr);
+        buf.ifNotNull(target.getDisplayField())
+                .write("(", target.getDisplayField(), ")");
+        buf.write("} to ", target.getName());
 
-            var targetDisplayField = target.getDisplayField();
-            var ownerDisplayField = owner.getDisplayField();
-
-            buf.write("\t", target.getName(), "{", objName(owner));
-
-            buf.ifNotNull(ownerDisplayField).write("(", ownerDisplayField, ")");
-
-            buf.write("} to ", owner.getName(), "{", attributeName);
-
-            buf.ifNotNull(targetDisplayField).write("(", targetDisplayField, ")");
-
+        if (!unidirectional && !relationship.equals(RelationshipType.ManyToOne)) {
+            buf.write("{", targetAttr);
+            buf.ifNotNull(owner.getDisplayField())
+                    .write("(", owner.getDisplayField(), ")");
             buf.write("}");
         }
 
@@ -108,6 +118,15 @@ public class Relationship extends Reference implements Comparable<Relationship> 
         buf.writeln();
     }
 
+    public void appendDetailLn(Entity owner, Appendable appendable) {
+        appendDetail(owner, appendable);
+        try {
+            appendable.append("\n");
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
     public void appendDetail(Entity owner, Appendable appendable) {
         var buf = new AppendableWrapper(appendable);
         boolean isOwner = getOwner() == owner;
@@ -164,9 +183,9 @@ public class Relationship extends Reference implements Comparable<Relationship> 
                 }
                 break;
         }
-        buf.write(getValidation());
+        
+        buf.ifNotNull(getValidation()).write(" ", getValidation());
         buf.ifNotNull(getComment()).write("\t// ", getComment());
-        buf.writeln();
     }
     
     private String objName(Entity owner) {
