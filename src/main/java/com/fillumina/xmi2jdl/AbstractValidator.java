@@ -125,16 +125,16 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         test("forbiddenEntityNameCheck");
 
         Arrays.asList(names).forEach(n -> {
-            if (!findEntitiesByRegexp(n).isEmpty()) {
-                error("Bad name for entity '", n , "'");
-            }
+            findEntitiesByRegexp(n).stream().forEach(e -> {
+                error("Bad name for entity '", e.getName() , "'");
+            });
         });
         
         endTest();
     }
     
     public void allEntitisMustHaveADisplayFieldExcept(String ... exempted) {
-        test("all entitis must have a display field");
+        test("all entities must have a display field");
         
         List<String> exemptedList = Arrays.asList(exempted);
         

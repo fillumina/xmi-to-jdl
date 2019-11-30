@@ -29,7 +29,7 @@ public class EntityDiagramValidator extends AbstractValidator {
                     .filter( dt -> dt.getName().equals("creationDate"))
                     .count();
             if (count == 0) {
-                error("Price missing 'creationDate':", e.getName());
+                warning("Price missing 'creationDate':", e.getName());
             }
         });
         
@@ -45,7 +45,7 @@ public class EntityDiagramValidator extends AbstractValidator {
                     .filter( dt -> dt.getName().equals("price"))
                     .count();
             if (count == 0) {
-                error("Missing 'price':", e.getName());
+                warning("Missing 'price':", e.getName());
             }
         });
         

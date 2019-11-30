@@ -42,7 +42,7 @@ import org.xml.sax.SAXException;
  * <li>any validation valid for the field type:
  * <ul>
  * <li>String:  required, minlength(2), maxlength(33), pattern, unique
- * <li>numbers: required, min, max, unique
+ * <li>numbers: required, min(1), max(100), unique
  * <li>blobs:  	required, minbytes, maxbytes, unique
  * </ul>
  * </ul>

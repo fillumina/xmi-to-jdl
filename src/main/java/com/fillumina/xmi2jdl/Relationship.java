@@ -13,6 +13,7 @@ public class Relationship extends Reference implements Comparable<Relationship> 
     private final String attributeName;
     private final String validation;
     private final RelationshipType relationship;
+    private final boolean required;
     private final boolean unidirectional;
     private final boolean invertedOneToMany;
 
@@ -31,6 +32,7 @@ public class Relationship extends Reference implements Comparable<Relationship> 
             this.owner = target;
             this.target = owner;
             this.invertedOneToMany = true;
+            this.required = false;
         } else {
             String v = validation;
             RelationshipType rel = null;
@@ -58,10 +60,16 @@ public class Relationship extends Reference implements Comparable<Relationship> 
             } else {
                 this.unidirectional = false;
             }
-            this.validation = v;
+            if (v.contains("required")) {
+                v = v.replace("required", "");
+                this.required = true;
+            } else {
+                this.required = false;
+            }
+            this.validation = v.trim();
         }
     }
-
+    
     @Override
     public String getValidation() {
         return this.validation;
@@ -104,6 +112,7 @@ public class Relationship extends Reference implements Comparable<Relationship> 
         buf.write("\t", owner.getName(), "{", ownerAttr);
         buf.ifNotNull(target.getDisplayField())
                 .write("(", target.getDisplayField(), ")");
+        buf.ifTrue(required).write(" required");
         buf.write("} to ", target.getName());
 
         if (!unidirectional && !relationship.equals(RelationshipType.ManyToOne)) {
@@ -155,13 +164,13 @@ public class Relationship extends Reference implements Comparable<Relationship> 
 
                 } else {
                     if (isOwner) {
-                        var arrow = isUnidirectional() ? " |--> ":" ---> ";
-                        buf.write("N:1 ", getAttributeName(), arrow, 
-                                getTarget().getName());
-                    } else {
                         var arrow = isUnidirectional() ? " <--| ":" <--- ";
-                        buf.write("1:N", arrow, getOwner().getName(),
-                                "(", getAttributeName(), ") ");
+                        buf.write("N:1", arrow, getTarget().getName(), 
+                                "(", getAttributeName(), ")");
+                    } else {
+                        var arrow = isUnidirectional() ? " |--> ":" ---> ";
+                        buf.write("1:N ",  getAttributeName(), arrow, 
+                                getOwner().getName());
                     }
                 }
                 break;
@@ -172,18 +181,18 @@ public class Relationship extends Reference implements Comparable<Relationship> 
 
                 } else {
                     if (isOwner) {
-                        var arrow = isUnidirectional() ? " |--> ":" ---> ";
+                        var arrow = isUnidirectional() ? " <--| ":" <--- ";
                         buf.write("N:1 ", getAttributeName(), arrow, 
                                 getTarget().getName());
                     } else {
-                        var arrow = isUnidirectional() ? " <--| ":" <--- ";
+                        var arrow = isUnidirectional() ? " |--> ":" ---> ";
                         buf.write("1:N", arrow, getOwner().getName(),
                                 "(", getAttributeName(), ") ");
                     }
                 }
                 break;
         }
-        
+        buf.ifTrue(required).write(" required");
         buf.ifNotNull(getValidation()).write(" ", getValidation());
         buf.ifNotNull(getComment()).write("\t// ", getComment());
     }
