@@ -154,18 +154,18 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         endTest();
     }
     
-    void allConnectedMustHaveNameField(String entityName, String fieldName) {
+    void allConnectedMustHaveNameFields(String entityName, String... fieldNames) {
         test("all connected to " + entityName + 
-                " must have field named " + fieldName);
+                " must have field named " + Arrays.toString(fieldNames));
 
         findEntityByName(entityName).ifPresentOrElse(( Entity detail) -> {
             detail.getAllRelationships().stream()
                     .map(e -> e.getOwner())
                     .filter(e -> e != detail)
                     .peek(e -> log("checking " + e.getName())) 
-                    .filter(e -> e.getFieldByName(fieldName).isEmpty())
-                    .forEach(e -> error("Entity missing '" + fieldName + 
-                            "': ", e.getName()));
+                    .filter(e -> Arrays.stream(fieldNames)
+                            .allMatch(f -> e.getFieldByName(f).isEmpty()))
+                    .forEach(e -> error("Entity missing ", e.getName()));
 
         }, () -> error(entityName + " not found!"));
         
@@ -195,6 +195,29 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
                     .filter(e -> e.getRelationByName(fieldName).isEmpty())
                     .forEach(e -> error("Entity missing '" + fieldName + 
                             "': ", e.getName()));
+
+        }, () -> error(entityName + " not found!"));
+        
+        endTest();
+    }
+    
+    void allConnectedMustHaveUnidirectionalRelationExcept(String entityName, 
+            String ... exceptions) {
+        test("all connected to " + entityName + 
+                " must have unidirectional relationship except: " + 
+                Arrays.toString(exceptions));
+
+        List<String> ex = Arrays.asList(exceptions);
+        
+        findEntityByName(entityName).ifPresentOrElse(( Entity entity) -> {
+            entity.getAllRelationships().stream()
+                    .filter(r -> !ex.contains(r.getOwner().getName()) )
+                    .filter(r -> r.getOwner() != entity)
+                    .filter(r -> !r.getRelationshipType().equals(RelationshipType.OneToMany))
+                    .peek(r -> log("checking " + r.getOwner().getName() + " ..."))
+                    .filter(r -> !r.isUnidirectional())
+                    .forEach(r -> error("not unidirectional from " + 
+                            r.getOwner().getName()));
 
         }, () -> error(entityName + " not found!"));
         

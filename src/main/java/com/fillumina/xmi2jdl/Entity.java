@@ -116,15 +116,6 @@ public class Entity implements Comparable<Entity> {
                         .filter(r -> r.getRelationshipType() == relationship)
                         .forEach(r -> r.appendDetailLn(this, appendable));
             }
-            
-            if (filter || pagination != null || skipClient || skipServer) {
-                buf.write("ATTR: ");
-                buf.ifNotNull(getPagination()).write(getPagination(), " ");
-                buf.ifTrue(filter).write("filter ");
-                buf.ifTrue(skipClient).write("skipClient ");
-                buf.ifTrue(skipServer).write("skipServer ");
-                buf.writeln();
-            }
             buf.writeln("*/");
         }
 

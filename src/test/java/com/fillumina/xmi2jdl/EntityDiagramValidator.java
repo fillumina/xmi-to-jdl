@@ -18,6 +18,10 @@ public class EntityDiagramValidator extends AbstractValidator {
         forbiddenEntityNameCheck("Order", ".*Detail", "UserAuthority");
         allConnectedEntitiesMustHaveRelationNamedTheSame();
         noCircularOneToOneWithMapIdRelationships();
+        
+        allConnectedMustHaveNameFields("Article", "name");
+        allConnectedMustHaveUnidirectionalRelationExcept("MediaContent", "Article");
+        allConnectedMustHaveUnidirectionalRelationExcept("Article");
     }
     
     void allPricesShouldHaveCreationTime() {
@@ -35,7 +39,7 @@ public class EntityDiagramValidator extends AbstractValidator {
         
         endTest();
     }
-
+    
     void allPricesNotOptionPriceShouldHavePrice() {
         test("allPricesNotOptionPriceShouldHavePrice");
 

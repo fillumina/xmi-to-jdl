@@ -11,6 +11,8 @@ import org.xml.sax.SAXException;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
+// TODO try to determine if a color is light or dark
+// TODO rewrite to have a ColorSizeVariant class
 public class AppTest {
 
     private static final String FILENAME = "class_diagram.xmi";
@@ -26,7 +28,7 @@ public class AppTest {
                 .getResourceAsStream("class-diagram.xmi");
         
         //new Parser().parseInputStream(inputStream)
-        new Parser().parseFile(new File("/home/fra/Development/Work/Emporia/ClassDiagram/extended_class_diagram_final_37.xmi"))
+        new Parser().parseFile(new File("/home/fra/Development/Work/Emporia/ClassDiagram/extended_class_diagram_final_40.xmi"))
         //new Parser().parseFile(new File("/home/fra/Development/Work/Emporia/jhipster-test3/shop.xmi"))
                     .exec(new JdlProducer(System.out))
                     .exec(new EntityDiagramValidator());

@@ -94,6 +94,10 @@ public class Relationship extends Reference implements Comparable<Relationship> 
     public boolean isUnidirectional() {
         return unidirectional;
     }
+
+    public boolean isRequired() {
+        return required;
+    }
     
     @Override
     public void append(Appendable appendable) {
