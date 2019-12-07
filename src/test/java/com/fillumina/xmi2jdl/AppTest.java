@@ -28,7 +28,7 @@ public class AppTest {
                 .getResourceAsStream("class-diagram.xmi");
         
         //new Parser().parseInputStream(inputStream)
-        new Parser().parseFile(new File("/home/fra/Development/Work/Emporia/ClassDiagram/extended_class_diagram_final_40.xmi"))
+        new Parser().parseFile(new File("/home/fra/Development/Work/Emporia/ClassDiagram/extended_class_diagram_final_44.xmi"))
         //new Parser().parseFile(new File("/home/fra/Development/Work/Emporia/jhipster-test3/shop.xmi"))
                     .exec(new JdlProducer(System.out))
                     .exec(new EntityDiagramValidator());

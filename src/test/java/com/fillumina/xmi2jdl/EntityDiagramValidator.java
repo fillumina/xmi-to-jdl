@@ -12,27 +12,39 @@ public class EntityDiagramValidator extends AbstractValidator {
         
         allPricesShouldHaveCreationTime();
         allPricesNotOptionPriceShouldHavePrice();
-        //allEntitisMustHaveADisplayField();
+//        allEntitisMustHaveADisplayFieldExcept(
+//            "Contact", "OrderOptionItem", "ColorSizeVariant", 
+//            "Tag", "OrderStatusType", "CustomizationOption",
+//            "OrderStatus", "Material", "OrderAreaCustomization",
+//            "OrderAreaCustomization", "MediaContent", 
+//            "ColorVariant", "User", "OrderProduct",
+//            "OrderOptionCustomization"
+//        );
         
         allEntitisMustHaveADisplayFieldExcept();
         forbiddenEntityNameCheck("Order", ".*Detail", "UserAuthority");
         allConnectedEntitiesMustHaveRelationNamedTheSame();
         noCircularOneToOneWithMapIdRelationships();
         
-        allConnectedMustHaveNameFields("Article", "name");
-        allConnectedMustHaveUnidirectionalRelationExcept("MediaContent", "Article");
         allConnectedMustHaveUnidirectionalRelationExcept("Article");
+        
+        findAllEntitiesWithFieldName("imageUrl");
+        
+        showAllEntitiesConnectedTo("Article");
+        
+        allFieldsMustHaveValidation("active", "required");
     }
     
     void allPricesShouldHaveCreationTime() {
-        test("allPricesShouldHaveCreationTime");
+        test("all Prices should have CreationTime");
 
         findEntitiesByRegexp(".*Price").forEach( e -> {
             log("checking ", e.getName());
             long count = e.getDataTypes().stream()
-                    .filter( dt -> dt.getName().equals("creationDate"))
+                    .filter( dt -> dt.getName().equals("creationTime") || 
+                            dt.getName().equals("removalTime"))
                     .count();
-            if (count == 0) {
+            if (count != 2) {
                 warning("Price missing 'creationDate':", e.getName());
             }
         });
@@ -41,7 +53,7 @@ public class EntityDiagramValidator extends AbstractValidator {
     }
     
     void allPricesNotOptionPriceShouldHavePrice() {
-        test("allPricesNotOptionPriceShouldHavePrice");
+        test("all Prices but not OptionPrice should have price field");
 
         findEntitiesByRegexp("^((?!Option).)*Price$").forEach( e -> {
             log("checking ", e.getName());
@@ -56,14 +68,4 @@ public class EntityDiagramValidator extends AbstractValidator {
         endTest();
     }
 
-//    void allEntitisMustHaveADisplayField() {
-//        super.allEntitisMustHaveADisplayFieldExcept(
-//            "Contact", "OrderOptionItem", "ColorSizeVariant", 
-//            "Tag", "OrderStatusType", "CustomizationOption",
-//            "OrderStatus", "Material", "OrderAreaCustomization",
-//            "OrderAreaCustomization", "MediaContent", 
-//            "ColorVariant", "User", "OrderProduct",
-//            "OrderOptionCustomization"
-//        );
-//    }
 }

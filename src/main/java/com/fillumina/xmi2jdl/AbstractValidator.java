@@ -1,12 +1,12 @@
 package com.fillumina.xmi2jdl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -53,7 +53,15 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
                 .filter(e -> pattern.matcher(e.getName()).matches())
                 .collect(Collectors.toList());
     }
-
+        
+    protected List<Entity> findAllEntitiesConnectedTo(String entityName) {
+        Entity e = findEntityByName(entityName).get();
+        return e.getAllRelationships().stream()
+                .map(r -> (r.getOwner() == e) ? r.getTarget() : r.getOwner())
+                .collect(Collectors.toList());
+    }
+    
+    
     private void startTests() {
         System.out.println("/*");
         System.out.println("Executing Validator");
@@ -78,6 +86,14 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         if (sameLine) ok();
         System.out.println("");
         System.out.print("testing " + name + " ...");
+        sameLine = true;
+        error = false;
+    }
+    
+    protected void show(String name) {
+        if (sameLine) ok();
+        System.out.println("");
+        System.out.print("show " + name + " ...");
         sameLine = true;
         error = false;
     }
@@ -133,17 +149,33 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         endTest();
     }
     
-    public void allEntitisMustHaveADisplayFieldExcept(String ... exempted) {
-        test("all entities must have a display field");
+    public void showAllEntitiesConnectedTo(String entityName) {
+        show("all entities connected with " + entityName);
+
+        findAllEntitiesConnectedTo(entityName).stream()
+                .forEach(e -> log(e.getName()));
         
-        List<String> exemptedList = Arrays.asList(exempted);
+        endTest();
+    }
+    
+    public void allEntitisMustHaveADisplayFieldExcept(String ... exception) {
+        test("all entities must have only 1 display field");
+        
+        List<String> exemptedList = Arrays.asList(exception);
         
         entities.values().forEach( e -> {
-            AtomicBoolean present = new AtomicBoolean(false);
+            List<String> displayFieldList = new ArrayList<>();
             e.getDataTypes().forEach(r -> {
-                present.set(present.get() || r.isDisplay());
+                if (r.isDisplay()) {
+                    displayFieldList.add(r.getName());
+                    if (displayFieldList.size() != 1) {
+                        error("Entity", e.getName(), 
+                                "has more than 1 display field: ",
+                                displayFieldList.toString());
+                    }
+                }
             });
-            if (!present.get() && !exemptedList.contains(e.getName())) {
+            if (displayFieldList.isEmpty() && !exemptedList.contains(e.getName())) {
                 warning("Entity", e.getName(), "does not have display");
             }
         });
@@ -154,21 +186,34 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         endTest();
     }
     
-    void allConnectedMustHaveNameFields(String entityName, String... fieldNames) {
+    void allConnectedMustHaveNameFieldExcept(String entityName, 
+            String fieldName, String... exceptions) {
         test("all connected to " + entityName + 
-                " must have field named " + Arrays.toString(fieldNames));
+                " must have field named " + fieldName + 
+                " except " + Arrays.toString(exceptions));
 
         findEntityByName(entityName).ifPresentOrElse(( Entity detail) -> {
             detail.getAllRelationships().stream()
-                    .map(e -> e.getOwner())
+                    .map(r -> r.getOwner())
+                    .filter(e -> !Arrays.stream(exceptions)
+                            .anyMatch(a -> a.equals(e.getName())) )
                     .filter(e -> e != detail)
                     .peek(e -> log("checking " + e.getName())) 
-                    .filter(e -> Arrays.stream(fieldNames)
-                            .allMatch(f -> e.getFieldByName(f).isEmpty()))
+                    .filter(e -> e.getFieldByName(fieldName).isEmpty())
                     .forEach(e -> error("Entity missing ", e.getName()));
 
         }, () -> error(entityName + " not found!"));
         
+        endTest();
+    }
+    
+    void findAllEntitiesWithFieldName(String fieldName) {
+        show("all entities with field named " + fieldName);
+
+        entities.values().stream()
+            .filter(e -> !e.getFieldByName(fieldName).isEmpty())
+            .forEach(e -> log("Entity", e.getName()));
+
         endTest();
     }
         
@@ -178,18 +223,22 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
             String entityName = e.getName();
             String fieldName = "" + Character.toLowerCase(entityName.charAt(0)) +
                     entityName.substring(1);
-            allConnectedMustHaveRelationName(entityName, fieldName);
+            allConnectedMustHaveRelationNameExcept(entityName, fieldName);
         });
     }
     
-    void allConnectedMustHaveRelationName(String entityName, String fieldName) {
+    void allConnectedMustHaveRelationNameExcept(String entityName, 
+            String fieldName, String... exceptions) {
         test("all connected to " + entityName + 
-                " must have the relation named " + fieldName);
+                " must have the relation named " + fieldName + 
+                " except " + Arrays.toString(exceptions));
 
         findEntityByName(entityName).ifPresentOrElse(( Entity entity) -> {
             entity.getAllRelationships().stream()
                     .filter(r -> !r.getRelationshipType().equals(RelationshipType.OneToMany))
                     .map(r -> r.getOwner())
+                    .filter(e -> !Arrays.stream(exceptions)
+                            .anyMatch(a -> a.equals(e.getName())) )
                     .filter(e -> e != entity)
                     .peek(e -> log("checking " + e.getName())) 
                     .filter(e -> e.getRelationByName(fieldName).isEmpty())
@@ -207,11 +256,10 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
                 " must have unidirectional relationship except: " + 
                 Arrays.toString(exceptions));
 
-        List<String> ex = Arrays.asList(exceptions);
-        
         findEntityByName(entityName).ifPresentOrElse(( Entity entity) -> {
             entity.getAllRelationships().stream()
-                    .filter(r -> !ex.contains(r.getOwner().getName()) )
+                    .filter(r -> !Arrays.stream(exceptions)
+                            .anyMatch(e -> e.equals(r.getOwner().getName())) )
                     .filter(r -> r.getOwner() != entity)
                     .filter(r -> !r.getRelationshipType().equals(RelationshipType.OneToMany))
                     .peek(r -> log("checking " + r.getOwner().getName() + " ..."))
@@ -229,7 +277,6 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         
         entities.values().forEach(e -> {
             Set<Entity> equalIdSet = new HashSet<>();
-            String entityName = e.getName();
             e.getMapIdConnectedEntityList().forEach(c -> {
                 if (equalIdSet.contains(c)) {
                     error("circular @MapId with ", e.getName(), " and ", c.getName());
@@ -239,5 +286,21 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         });
     }
     
-    // TODO warning for lone Entity or linked by only one
+    void allFieldsMustHaveValidation(String fieldName, String validation) {
+        test("all fields " + fieldName + " must have validation " + validation);
+
+        entities.values().forEach( e -> {
+            Optional<DataTypeRef> opt = e.getFieldByName(fieldName);
+            if (opt.isPresent()) {
+                DataTypeRef dataType = opt.get();
+                log("checking ", e.getName());
+                String dataVal = dataType.getValidation();
+                if (dataVal == null || !dataVal.contains(validation)) {
+                    error(validation, " is not present");
+                }
+            }
+        });
+        
+        endTest();
+    }
 }

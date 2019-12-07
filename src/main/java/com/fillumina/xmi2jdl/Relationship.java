@@ -110,8 +110,8 @@ public class Relationship extends Reference implements Comparable<Relationship> 
         var ownerAttr = invertedOneToMany ? objName(target) : attributeName;
         var targetAttr = invertedOneToMany ? attributeName : objName(owner);
         
-        buf.write("\t/* ", owner.getName(), " ")
-                .append(a -> appendDetail(owner, a)).writeln(" */");
+//        buf.write("\t/* ", owner.getName(), " ")
+//                .append(a -> appendDetail(owner, a)).writeln(" */");
         
         buf.write("\t", owner.getName(), "{", ownerAttr);
         buf.ifNotNull(target.getDisplayField())
