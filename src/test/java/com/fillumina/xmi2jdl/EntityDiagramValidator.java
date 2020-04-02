@@ -2,7 +2,7 @@ package com.fillumina.xmi2jdl;
 
 /**
  *
- * @author fra
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class EntityDiagramValidator extends AbstractValidator {
 
@@ -22,9 +22,10 @@ public class EntityDiagramValidator extends AbstractValidator {
 //        );
         
         allEntitisMustHaveADisplayFieldExcept();
-        forbiddenEntityNameCheck("Order", ".*Detail", "UserAuthority");
+        forbiddenEntityNameCheck("Order", ".*Detail", "UserAuthority", "Page");
         allConnectedEntitiesMustHaveRelationNamedTheSame();
         noCircularOneToOneWithMapIdRelationships();
+        checkAllNamesFirstCharLowerCaseAndMaxLength();
         
         allConnectedMustHaveUnidirectionalRelationExcept("Article");
         
@@ -36,7 +37,7 @@ public class EntityDiagramValidator extends AbstractValidator {
     }
     
     void allPricesShouldHaveCreationTime() {
-        test("all Prices should have CreationTime");
+        test("all Prices should have creationTime");
 
         findEntitiesByRegexp(".*Price").forEach( e -> {
             log("checking ", e.getName());

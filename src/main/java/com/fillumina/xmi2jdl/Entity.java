@@ -105,7 +105,7 @@ public class Entity implements Comparable<Entity> {
         var buf = new AppendableWrapper(appendable);
 
         if (!allRelationships.isEmpty() || comment != null) {
-            buf.writeln("/*");
+            buf.writeln("/**");
             
             buf.ifNotNull(comment).writeln(comment).writeln();
 

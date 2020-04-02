@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 /**
  *
- * @author fra
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class AppendableWrapper {
     private static final AppendableWrapper NULL = new AppendableWrapper(null);

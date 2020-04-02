@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 /**
  *
- * @author fra
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public abstract class AbstractValidator implements EntityDiagramConsumer {
     protected Map<String, DataType> dataTypes;
@@ -136,8 +136,22 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         System.out.println("\tERROR: " + msg);
     }
     
-
-    void forbiddenEntityNameCheck(String ... names) {
+    protected void checkAllNamesFirstCharLowerCaseAndMaxLength() {
+        test("check all field names against common mistakes");
+        
+        entities.values().stream()
+                .forEach(e -> {
+                    var entityName = e.getName();
+                    e.getDataTypes().stream()
+                            .map(d -> d.getName())
+                            .filter(n -> Character.isUpperCase(n.charAt(0)) || n.length() > 28)
+                            .forEach(n -> error("Entity", entityName, " field ", n));
+                });
+        
+        endTest();
+    }
+    
+    protected void forbiddenEntityNameCheck(String ... names) {
         test("forbiddenEntityNameCheck");
 
         Arrays.asList(names).forEach(n -> {
@@ -149,7 +163,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         endTest();
     }
     
-    public void showAllEntitiesConnectedTo(String entityName) {
+    protected void showAllEntitiesConnectedTo(String entityName) {
         show("all entities connected with " + entityName);
 
         findAllEntitiesConnectedTo(entityName).stream()
@@ -158,7 +172,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         endTest();
     }
     
-    public void allEntitisMustHaveADisplayFieldExcept(String ... exception) {
+    protected void allEntitisMustHaveADisplayFieldExcept(String ... exception) {
         test("all entities must have only 1 display field");
         
         List<String> exemptedList = Arrays.asList(exception);
@@ -186,7 +200,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         endTest();
     }
     
-    void allConnectedMustHaveNameFieldExcept(String entityName, 
+    protected void allConnectedMustHaveNameFieldExcept(String entityName, 
             String fieldName, String... exceptions) {
         test("all connected to " + entityName + 
                 " must have field named " + fieldName + 
@@ -207,7 +221,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         endTest();
     }
     
-    void findAllEntitiesWithFieldName(String fieldName) {
+    protected void findAllEntitiesWithFieldName(String fieldName) {
         show("all entities with field named " + fieldName);
 
         entities.values().stream()
@@ -217,7 +231,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         endTest();
     }
         
-    void allConnectedEntitiesMustHaveRelationNamedTheSame() {
+    protected void allConnectedEntitiesMustHaveRelationNamedTheSame() {
         
         entities.values().forEach(e -> {
             String entityName = e.getName();
@@ -227,7 +241,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         });
     }
     
-    void allConnectedMustHaveRelationNameExcept(String entityName, 
+    protected void allConnectedMustHaveRelationNameExcept(String entityName, 
             String fieldName, String... exceptions) {
         test("all connected to " + entityName + 
                 " must have the relation named " + fieldName + 
@@ -250,7 +264,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         endTest();
     }
     
-    void allConnectedMustHaveUnidirectionalRelationExcept(String entityName, 
+    protected void allConnectedMustHaveUnidirectionalRelationExcept(String entityName, 
             String ... exceptions) {
         test("all connected to " + entityName + 
                 " must have unidirectional relationship except: " + 
@@ -272,7 +286,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         endTest();
     }
     
-    void noCircularOneToOneWithMapIdRelationships() {
+    protected void noCircularOneToOneWithMapIdRelationships() {
         test("test circular 1 to 1 with @MapId");
         
         entities.values().forEach(e -> {
@@ -286,7 +300,7 @@ public abstract class AbstractValidator implements EntityDiagramConsumer {
         });
     }
     
-    void allFieldsMustHaveValidation(String fieldName, String validation) {
+    protected void allFieldsMustHaveValidation(String fieldName, String validation) {
         test("all fields " + fieldName + " must have validation " + validation);
 
         entities.values().forEach( e -> {

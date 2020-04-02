@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  *
- * @author fra
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 class ParsedEntity {
     private final List<ParsedAttribute> attributes = new ArrayList<>();

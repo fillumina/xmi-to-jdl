@@ -1,12 +1,11 @@
 package com.fillumina.xmi2jdl.parser;
 
-import com.fillumina.xmi2jdl.parser.CommentParser;
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  *
- * @author fra
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class CommentParserTest {
     

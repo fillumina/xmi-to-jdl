@@ -2,7 +2,7 @@ package com.fillumina.xmi2jdl.parser;
 
 /**
  *
- * @author fra
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 class ParsedAttribute {
     
