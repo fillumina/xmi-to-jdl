@@ -15,7 +15,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class ReadXMLFileUsingSaxparser 
+public class ReadXMLFileUsingSaxParser 
         extends DefaultHandler 
         implements EntityDiagram {
 

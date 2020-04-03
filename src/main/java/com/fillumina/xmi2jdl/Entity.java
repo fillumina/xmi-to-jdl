@@ -161,7 +161,8 @@ public class Entity implements Comparable<Entity> {
             return false;
         }
 
-        return ownedRelationships.stream().anyMatch(r -> r.getRelationshipType().equals(rel));
+        return ownedRelationships.stream()
+                .anyMatch(r -> r.getRelationshipType().equals(rel));
     }
 
     private boolean hasDataTypeAttributes() {

@@ -6,7 +6,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Reads an XMI file exported by <a href='https://umbrello.kde.org/'>Umbrello</a>
- * and produce a 
+ * and produces a 
  * <a href='https://www.jhipster.tech/jdl/'>JHipster domain language</a> file.
  * 
  * Relationships are ManyToOne by default and the owner is the entity

@@ -1,6 +1,6 @@
 package com.fillumina.xmi2jdl;
 
-import com.fillumina.xmi2jdl.parser.ReadXMLFileUsingSaxparser;
+import com.fillumina.xmi2jdl.parser.ReadXMLFileUsingSaxParser;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,11 +17,11 @@ import org.xml.sax.SAXException;
  */
 public class Parser {
     
-    private final ReadXMLFileUsingSaxparser hb;
+    private final ReadXMLFileUsingSaxParser hb;
     private final SAXParserFactory parserfactory;
 
     public Parser() {
-        this.hb = new ReadXMLFileUsingSaxparser();
+        this.hb = new ReadXMLFileUsingSaxParser();
         this.parserfactory = SAXParserFactory.newInstance();
     }
     
