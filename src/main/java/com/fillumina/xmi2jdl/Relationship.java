@@ -1,7 +1,5 @@
 package com.fillumina.xmi2jdl;
 
-import java.io.IOException;
-
 /**
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
@@ -133,11 +131,7 @@ public class Relationship extends Reference implements Comparable<Relationship> 
 
     public void appendDetailLn(Entity owner, Appendable appendable) {
         appendDetail(owner, appendable);
-        try {
-            appendable.append("\n");
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+        new AppendableWrapper(appendable).writeln();
     }
     
     public void appendDetail(Entity owner, Appendable appendable) {

@@ -7,25 +7,28 @@ package com.fillumina.xmi2jdl.parser;
 class ParsedAttribute {
     
     private final String attributeName;
-    private final String type;
-    private final String comment;
+    private final String targetId;
+    private String comment;
 
-    public ParsedAttribute(String attributeName, String type, String comment) {
+    public ParsedAttribute(String attributeName, String targetId, String comment) {
         this.attributeName = attributeName;
-        this.type = type;
+        this.targetId = targetId;
         this.comment = comment;
     }
 
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+    
     public String getAttributeName() {
         return attributeName;
     }
 
-    public String getType() {
-        return type;
+    public String getTargetId() {
+        return targetId;
     }
 
     public String getComment() {
         return comment;
     }
-    
 }

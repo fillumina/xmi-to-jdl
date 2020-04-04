@@ -10,20 +10,31 @@ import java.util.stream.Collectors;
  */
 public class Enumeration extends DataType implements Comparable<Enumeration> {
 
-    private static class Literal {
-        final String value;
-        final String comment;
+    public static class Literal {
+        private final String value;
+        private final String comment;
 
         public Literal(String name, String comment) {
             // Enum values are always UPPER CASE in JDL
             this.value = name.trim().toUpperCase();
             this.comment = comment;
         }
+
+        public String getValue() {
+            return value;
+        }
+
+        public String getComment() {
+            return comment;
+        }
     }
     
     private final List<Literal> literals = new ArrayList<>();
 
-
+    public List<Literal> getLiterals() {
+        return literals;
+    }
+    
     public Enumeration(String name, String id, 
             String comment, String validation) {
         super(id, name, comment, validation);

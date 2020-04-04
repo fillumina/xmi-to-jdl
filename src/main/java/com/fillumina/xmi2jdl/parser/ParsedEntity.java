@@ -7,6 +7,8 @@ import com.fillumina.xmi2jdl.Relationship;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  *
@@ -39,6 +41,14 @@ class ParsedEntity {
         allRelations.add(entityRef);
     }
     
+    public Optional<ParsedAttribute> getParsedAttributeByEntityIdAndName(
+            String entityId, String name) {
+        return attributes.stream()
+                .filter(a -> Objects.equals(name, a.getAttributeName()) && 
+                        Objects.equals(entityId, a.getTargetId()))
+                .findFirst();
+    }
+    
     public Entity createEntity(Map<String,String> substitutions) {
         CommentParser cp = 
                 new CommentParser(substitutions, comment);
@@ -52,7 +62,7 @@ class ParsedEntity {
             Map<String, ParsedEntity> parsedEntitiesMap,
             Map<String, String> substitutionsMap) {
         attributes.forEach(a -> {
-            final String type = a.getType();
+            final String type = a.getTargetId();
             CommentParser cp = 
                     new CommentParser(substitutionsMap, a.getComment() );
             DataType dataType = dataTypeMap.get(type);
@@ -65,7 +75,8 @@ class ParsedEntity {
                 DataTypeRef dataTypeRef = new DataTypeRef(
                         dataType,
                         a.getAttributeName(), 
-                        cp.getComment(), cp.getValidation() );
+                        cp.getComment(), 
+                        cp.getValidation() );
                 dataTypes.add(dataTypeRef);
             } else {
                 ParsedEntity target = parsedEntitiesMap.get(type);
@@ -73,7 +84,8 @@ class ParsedEntity {
                     Relationship entityRef = new Relationship(
                             entity, target.entity,
                             a.getAttributeName(), 
-                            cp.getComment(), cp.getValidation() );
+                            cp.getComment(), 
+                            cp.getValidation() );
                     ownedRelations.add(entityRef);
                     allRelations.add(entityRef);
                     if (target.entity != entity) {

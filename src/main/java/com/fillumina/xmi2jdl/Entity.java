@@ -2,6 +2,7 @@ package com.fillumina.xmi2jdl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -146,7 +147,7 @@ public class Entity implements Comparable<Entity> {
         AtomicBoolean atLeastOne = new AtomicBoolean(false);
         
         ownedRelationships.stream()
-                .filter(r -> r.getRelationshipType().equals(rel))
+                .filter(r -> Objects.equals(r.getRelationshipType(), rel))
                 .peek(e -> atLeastOne.set(true))
                 .forEach(r -> r.append(appendable));
         
@@ -162,7 +163,7 @@ public class Entity implements Comparable<Entity> {
         }
 
         return ownedRelationships.stream()
-                .anyMatch(r -> r.getRelationshipType().equals(rel));
+                .anyMatch(r -> Objects.equals(r.getRelationshipType(), rel));
     }
 
     private boolean hasDataTypeAttributes() {
@@ -195,6 +196,31 @@ public class Entity implements Comparable<Entity> {
     @Override
     public int compareTo(Entity o) {
         return getName().compareTo(o.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Entity other = (Entity) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
 
     @Override

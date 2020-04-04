@@ -9,7 +9,8 @@ import java.util.function.Consumer;
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class AppendableWrapper {
-    private static final AppendableWrapper NULL = new AppendableWrapper(null);
+    private static final AppendableWrapper NULL = 
+            new AppendableWrapper((Appendable)null);
     
     private final Appendable appendable;
     private boolean used;
@@ -20,6 +21,10 @@ public class AppendableWrapper {
     
     public AppendableWrapper(Appendable appendable) {
         this.appendable = appendable;
+    }
+    
+    public AppendableWrapper(AppendableWrapper appendableWrapper) {
+        this.appendable = appendableWrapper.appendable;
     }
     
     public AppendableWrapper write(Object ... array) {

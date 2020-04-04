@@ -6,6 +6,7 @@ import com.fillumina.xmi2jdl.EntityDiagram;
 import com.fillumina.xmi2jdl.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -28,6 +29,7 @@ public class ReadXMLFileUsingSaxParser
 
     private ParsedEntity currentEntity;
     private Enumeration currentEnumeration;
+    private ParsedRelationship parsedRelationship;
 
     public void consolidate() {
         parsedEntities.values().forEach(e -> {
@@ -73,14 +75,17 @@ public class ReadXMLFileUsingSaxParser
                 case "UML:Attribute":
                     {
                         String attributeName = attributes.getValue("name");
-                        String type = attributes.getValue("type");
+                        String targetId = attributes.getValue("type");
                         String comment = attributes.getValue("comment");
+                        
+                        ParsedAttribute parsedAttribute = new ParsedAttribute(
+                            attributeName, targetId, comment);
 
-                        currentEntity.addAttribute(new ParsedAttribute(
-                                attributeName, type, comment));
+                        currentEntity.addAttribute(parsedAttribute);
                         
                         break;
                     }
+
                 case "UML:Enumeration":
                     {
                         String name = attributes.getValue("name");
@@ -119,6 +124,31 @@ public class ReadXMLFileUsingSaxParser
                         }
                         break;
                     }
+                case "assocwidget":
+                    {
+                        String fromEntityId = attributes.getValue("widgetaid");
+                        String toEntityId = attributes.getValue("widgetbid");
+                        parsedRelationship = new ParsedRelationship()
+                                .ownerEntityId(fromEntityId)
+                                .targetEntityId(toEntityId);
+                        break;
+                    }
+                case "floatingtext":
+                    {
+                        String role = attributes.getValue("role");
+                        String text = attributes.getValue("text");
+                        switch (role) {
+                            case "701":
+                                parsedRelationship.ownerMultiplicity(text);
+                                break;
+                            case "702":
+                                parsedRelationship.targetMultiplicity(text);
+                                break;
+                            case "710":
+                                parsedRelationship.name(text);
+                        }
+                        break;
+                    }
                 default:
                     break;
             }
@@ -127,11 +157,43 @@ public class ReadXMLFileUsingSaxParser
                 throw new RuntimeException(
                     "Exception in entity " + this.currentEntity.getName(), e);
             } else {
-                throw new RuntimeException(
-                    "Exception in enumeration " + this.currentEnumeration.getName(), 
-                        e);
+                throw new RuntimeException("Exception in enumeration " + 
+                        this.currentEnumeration.getName(), e);
             }
         }
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName) 
+            throws SAXException {
+        
+        switch (qName) {
+            case "assocwidget": 
+                ParsedEntity pe = parsedEntities.get(
+                        parsedRelationship.getOwnerEntityId());
+                
+                if (pe != null) {
+                    Optional<ParsedAttribute> attribute = 
+                            pe.getParsedAttributeByEntityIdAndName(
+                                    parsedRelationship.getTargetEntityId(),
+                                    parsedRelationship.getName());
+
+                    if (attribute.isPresent() && 
+                            parsedRelationship.getOwnerMultiplicity() != null) {
+                        ParsedAttribute attr = attribute.get();
+                        CommentParser cp = new CommentParser(attr.getComment());
+                        String validation = cp.getValidation();
+                        String type = Multiplicity.getRelationAsString(
+                                parsedRelationship.getOwnerMultiplicity(),
+                                parsedRelationship.getTargetMultiplicity());
+                        String val = StringHelper.merge(type, validation);
+                        attr.setComment("{" + val + "} " + 
+                                StringHelper.toString(cp.getComment()) );
+                    }
+                }
+                break;
+        }
+
     }
 
     @Override
