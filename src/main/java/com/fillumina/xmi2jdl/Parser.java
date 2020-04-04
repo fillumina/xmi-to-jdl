@@ -20,8 +20,8 @@ public class Parser {
     private final ReadXMLFileUsingSaxParser hb;
     private final SAXParserFactory parserfactory;
 
-    public Parser() {
-        this.hb = new ReadXMLFileUsingSaxParser();
+    public Parser(boolean honourPrivate) {
+        this.hb = new ReadXMLFileUsingSaxParser(honourPrivate);
         this.parserfactory = SAXParserFactory.newInstance();
     }
     

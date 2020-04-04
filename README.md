@@ -1,19 +1,39 @@
 
 # XMI to JDL
-Reads an Class Diagram XMI file exported by [Umbrello UML Modeller
+Reads an Class Diagram XMI file exported by [Umbrello UML Modeller]
 (https://umbrello.kde.org/) and possibly other products compatible with
 the format and produces a 
 [JHipster](https://www.jhipster.tech/jdl/) JDL output.
 
-Relationships are `ManyToOne` by default and the owner is the entity
-containing the actual field (the FK on the DB). The relation must be
-declared only on the owner part. The multiplicity is not read from the
-Class Diagram itself but specified in the comment using curly brackets {}
+
+## Versions
+
+ . *2.0* 4/4/2020 uses class diagram relationships together with those defined 
+in comments
+
+ . *1.0* first version
+
+The multiplicity can be derived from the relationships defined in the class 
+diagram itself or by using the relationship comment curly brackets {}
 together with validations.
+
+If no relationship multiplicity is specified `ManyToOne` is used by default 
+and the owner is the entity containing the actual field (the FK on the DB). 
+The relation must be declared only on the owner part. 
 
 Only some of the options described here are parsed, the others will be
 just copied in the final JDL, so it's future ready for new options 
 to be added to JDL.
+
+Because it can be instructed to honour the private visibility of fields
+(by default it does not)
+it can be used to translate a java code imported by Umbrello. This is a
+very useful workflow because it allows to test the model with POJOs and then
+translate it to JDL.
+
+*REMEMBER*: always set the code to 'Java' in Umbrello so that the data types are
+set accordingly and you will not found a String entity when you use it
+in one of your attributes (Umbrello defaults to C++).
 
 ## Entity
 
@@ -49,7 +69,7 @@ from another entity in a relationship
 #### Validation
 any validation valid for the field type:
 
-. String:  `minlength(2)`, `maxlength(33)`, `pattern(/[a-zA-z]{7}/)`
+ . String:  `minlength(2)`, `maxlength(33)`, `pattern(/[a-zA-z]{7}/)`
 
  . numbers: `min(1)`, `max(2000)`
 
@@ -97,4 +117,5 @@ The complete graph is available for testing to validate
 it and can eventually be changed before producing the JDL.
 This must be done programmatically by adding specific code. There is
 a kind of pluggable way of acting on it. Testing a graph is 
-a very good way to avoid mistakes in case of many entities.
+a very good way to avoid mistakes in case of complex projects with many
+entities and relationships.

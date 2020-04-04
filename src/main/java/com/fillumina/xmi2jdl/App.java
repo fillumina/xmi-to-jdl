@@ -80,7 +80,7 @@ public class App {
         if (filename == null) {
             System.err.println("filename argument missing!");
         } else {
-            new Parser().parseFilename(filename)
+            new Parser(false).parseFilename(filename)
                     .exec(new JdlProducer(System.out));
         }
     }

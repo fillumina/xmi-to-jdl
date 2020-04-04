@@ -10,8 +10,8 @@ public class ClassDiagramTest extends AbstractTest {
     private static final String FILENAME = "class-diagram.xmi";
 
     public ClassDiagramTest() {
-//        super(FILENAME, System.out);
-        super(FILENAME, null);
+//        super(FILENAME, System.out, false);
+        super(FILENAME, null, true);
     }
     
     @Override
@@ -48,7 +48,7 @@ public class ClassDiagramTest extends AbstractTest {
         
         assertEnumValues("Status", "MARRIED", "FREE");
         
-        //assertAttributeNotPresent("Contact", "spouseName");
+        assertAttributeNotPresent("Contact", "spouseName");
     }
     
 }

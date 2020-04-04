@@ -10,8 +10,8 @@ public class CompanyTest extends AbstractTest {
     private static final String FILENAME = "company.xmi";
 
     public CompanyTest() {
-//        super(FILENAME, System.out);
-        super(FILENAME, null);
+//        super(FILENAME, System.out, false);
+        super(FILENAME, null, false);
     }
     
     @Override

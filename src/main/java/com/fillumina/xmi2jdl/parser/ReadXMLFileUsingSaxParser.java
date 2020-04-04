@@ -30,6 +30,12 @@ public class ReadXMLFileUsingSaxParser
     private ParsedEntity currentEntity;
     private Enumeration currentEnumeration;
     private ParsedRelationship parsedRelationship;
+    
+    private final boolean honourPrivateField;
+
+    public ReadXMLFileUsingSaxParser(boolean honourPrivateField) {
+        this.honourPrivateField = honourPrivateField;
+    }
 
     public void consolidate() {
         parsedEntities.values().forEach(e -> {
@@ -74,14 +80,18 @@ public class ReadXMLFileUsingSaxParser
                     }
                 case "UML:Attribute":
                     {
-                        String attributeName = attributes.getValue("name");
-                        String targetId = attributes.getValue("type");
-                        String comment = attributes.getValue("comment");
+                        String visibility = attributes.getValue("visibility");
                         
-                        ParsedAttribute parsedAttribute = new ParsedAttribute(
-                            attributeName, targetId, comment);
+                        if (!honourPrivateField || !"private".equals(visibility)) {
+                            String attributeName = attributes.getValue("name");
+                            String targetId = attributes.getValue("type");
+                            String comment = attributes.getValue("comment");
 
-                        currentEntity.addAttribute(parsedAttribute);
+                            ParsedAttribute parsedAttribute = new ParsedAttribute(
+                                attributeName, targetId, comment);
+
+                            currentEntity.addAttribute(parsedAttribute);
+                        }
                         
                         break;
                     }
