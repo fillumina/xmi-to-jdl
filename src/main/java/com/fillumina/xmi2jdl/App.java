@@ -4,18 +4,20 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
-// TODO update this help
 /**
  * Reads an XMI file exported by <a href='https://umbrello.kde.org/'>Umbrello</a>
  * and produces a 
  * <a href='https://www.jhipster.tech/jdl/'>JHipster domain language</a> file.
- * 
+ * <p>
+ * Relationships types can be specified in comments within curly brackets {} or 
+ * by specifying the multiplicities in the relation itself.
+ * <p>
  * Relationships are ManyToOne by default and the owner is the entity
  * containing the actual field (the FK on the db).
- *
+ * <p>
  * Field validation can be added within curly brackets {} in comments and will
  * be parsed and removed from the actual comment.
- * 
+ * <p>
  * Current available validations:
  * <ul>
  * <li><b>Entity</b><br>
@@ -53,7 +55,7 @@ import org.xml.sax.SAXException;
  * <pre><code>
  * KEY=VALUE
  * </code></pre>
- * There is no quotes and the first = separates key and value.
+ * There are no quotes and the first = separates key and value.
  * <p>
  * These are some useful substitutions:
  * <ul>
@@ -75,14 +77,20 @@ import org.xml.sax.SAXException;
  */
 public class App {
 
-    // TODO parses options (private honour and output file)
     public static void main(String[] args) throws IOException, SAXException,
             ParserConfigurationException {
-        var filename = args[0];
+        if (args.length == 0) {
+            System.out.println("usage: java -jar xmi-to-jdl filename [private]");
+            System.out.println("where: filename is the xmi file to parse");
+            System.out.println("and    private (true or false) means that private"
+                    + " fields are not be parsed");
+        }
+        var filename = args.length > 0 ? args[0] : null;
+        boolean honorPrivate = args.length > 1 ? Boolean.valueOf(args[1]) : false;
         if (filename == null) {
             System.err.println("filename argument missing!");
         } else {
-            new Parser(false).parseFilename(filename)
+            new Parser(honorPrivate).parseFilename(filename)
                     .exec(new JdlProducer(System.out));
         }
     }

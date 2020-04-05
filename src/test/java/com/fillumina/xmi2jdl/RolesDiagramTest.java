@@ -1,7 +1,8 @@
 package com.fillumina.xmi2jdl;
 
 /**
- * Tests all possible relationships between entities. 
+ * Tests all possible relationships between entities.
+ * Remember that required relationships with self are not allowed.
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */

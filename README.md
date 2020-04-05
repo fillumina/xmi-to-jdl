@@ -12,9 +12,9 @@ in comments
 
  . *1.0* first version could define relationship types by comments only
 
-The multiplicity can be derived from the relationships defined in the class 
+The multiplicity are derived from the relationships defined in the class 
 diagram itself or by using commands enclosed in curly brackets {} 
-in the relationship comment.
+in the relationship comment. The two methods can be mixed.
 
 If no relationship multiplicity is specified `ManyToOne` is used by default 
 and the owner is the entity containing the actual field (the FK on the DB). 
@@ -30,7 +30,7 @@ imported by Umbrello.
 This is a very useful workflow because it allows to test the model with POJOs 
 and then translate it into a full blown application with JHipster.
 
-It allows to inspect, test and modify the imported model before producing the
+It allows to inspect, test and modify the model before producing the
 JDL file which is very useful in case of big and complex projects with many
 entities and relationships.
 
@@ -119,6 +119,6 @@ MINLENGTH = 20
 The complete graph is available for testing to validate
 it and can eventually be changed before producing the JDL.
 This must be done programmatically by adding specific code. There is
-a kind of pluggable way of acting on it. Testing a graph is 
+a kind of pluggable way of doing this. Testing a graph is 
 a very good way to avoid mistakes in case of complex projects with many
 entities and relationships.
