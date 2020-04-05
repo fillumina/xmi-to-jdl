@@ -18,44 +18,52 @@ public class AssertEntity extends AbstractAssertor<AssertEntity> {
         Optional<Entity> entOpt = validator.findEntityByName(entityName);
         this.entity = testValidIfNotNull("entity " + entityName, entOpt.get());
     }
-    
-    protected AssertEntity assertPagination(Pagination pagination) {
+
+    public AssertEntity isPagination() {
+        return assertPagination(Pagination.pagination);
+    }
+
+    public AssertEntity isInfiniteScroll() {
+        return assertPagination(Pagination.infinite);
+    }
+
+    public AssertEntity assertPagination(Pagination pagination) {
         return assertEquals("pagination", pagination, entity.getPagination());
     }
     
-    protected AssertEntity isFilter() {
+    public AssertEntity isFilter() {
         return assertFilter(true);
     }
     
-    protected AssertEntity isNotFilter() {
+    public AssertEntity isNotFilter() {
         return assertFilter(false);
     }
     
-    protected AssertEntity assertFilter(boolean filter) {
+    public AssertEntity assertFilter(boolean filter) {
         return assertEquals("filter", filter, entity.isFilter());
     }
     
-    protected AssertEntity isSkipClient() {
+    public AssertEntity isSkipClient() {
         return assertSkipClient(true);
     }
     
-    protected AssertEntity isNotSkipClient() {
+    public AssertEntity isNotSkipClient() {
         return assertSkipClient(false);
     }
     
-    protected AssertEntity assertSkipClient(boolean skipClient) {
+    public AssertEntity assertSkipClient(boolean skipClient) {
         return assertEquals("skipClient", skipClient, entity.isSkipClient());
     }
 
-    protected AssertEntity isSkipServer() {
+    public AssertEntity isSkipServer() {
         return assertSkipServer(true);
     }
 
-    protected AssertEntity isNotSkipServer() {
+    public AssertEntity isNotSkipServer() {
         return assertSkipServer(false);
     }
     
-    protected AssertEntity assertSkipServer(boolean skipServer) {
+    public AssertEntity assertSkipServer(boolean skipServer) {
         return assertEquals("skipServer", skipServer, entity.isSkipServer());
     }
 }

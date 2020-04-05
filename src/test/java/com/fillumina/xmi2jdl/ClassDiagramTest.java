@@ -22,6 +22,17 @@ public class ClassDiagramTest extends AbstractTest {
 
         // JHipster provides its own User
         assertEntityPresent("User");
+
+        assertEntity("Address")
+                .isFilter()
+                .isPagination();
+
+        assertEntity("Contact")
+                .isSkipClient()
+                .isInfiniteScroll();
+
+        assertEntity("User")
+                .isSkipServer();
         
         assertRelationship("Contact", "user")
                 .assertTarget("User")
