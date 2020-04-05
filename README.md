@@ -5,6 +5,7 @@ Reads an Class Diagram XMI 1.2 file exported by
 and possibly other compatible products and produces
 a [JHipster](https://www.jhipster.tech/jdl/) JDL output.
 
+![Class Diagram](class-diagram.png)
 
 ## Versions
 
