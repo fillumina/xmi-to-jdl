@@ -1,6 +1,6 @@
 
 # XMI to JDL
-Reads an Class Diagram XMI 1.2 file exported by 
+Reads a Class Diagram XMI 1.2 file exported by 
 [Umbrello UML Modeller](https://umbrello.kde.org/) 
 and possibly other compatible products and produces
 a [JHipster](https://www.jhipster.tech/jdl/) JDL output.
