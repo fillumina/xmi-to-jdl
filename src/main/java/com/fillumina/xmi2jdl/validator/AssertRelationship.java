@@ -35,6 +35,11 @@ public class AssertRelationship extends AbstractAssertor<AssertRelationship> {
                 relationship.isUnidirectional());
     }
     
+    public AssertRelationship assertValidation(String validation) {
+        return assertEqualTokens("validation", validation, 
+                relationship.getValidation());
+    }
+    
     public AssertRelationship assertTarget(String target) {
         return assertEquals("target", target, relationship.getTarget().getName());
     }

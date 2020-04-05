@@ -1,5 +1,6 @@
 package com.fillumina.xmi2jdl.validator;
 
+import com.fillumina.xmi2jdl.util.StringHelper;
 import java.util.Objects;
 
 /**
@@ -36,6 +37,16 @@ public class AbstractAssertor<T extends AbstractAssertor<?>> {
     public T assertEquals(String what, Object shouldBe, Object is) {
         test(msg + " " + what, () -> {
             if (!Objects.equals(shouldBe, is)) {
+                validator.error(msg + " expected " + what + " be " + shouldBe + 
+                        " was " + is);
+            }
+        });
+        return (T) this;
+    }
+    
+    public T assertEqualTokens(String what, String shouldBe, String is) {
+        test(msg + " " + what, () -> {
+            if (!StringHelper.equalTokens(shouldBe, is)) {
                 validator.error(msg + " expected " + what + " be " + shouldBe + 
                         " was " + is);
             }

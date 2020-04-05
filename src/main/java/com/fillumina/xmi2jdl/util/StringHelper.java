@@ -25,8 +25,10 @@ public class StringHelper {
         if (b == null || b.isBlank()) {
             return a;
         }
-        Set<String> aset = new HashSet<>(Arrays.asList(a.split(" ")));
-        Set<String> bset = new HashSet<>(Arrays.asList(b.split(" ")));
+        Set<String> aset = new HashSet<>(Arrays.asList(
+                a.trim().replaceAll("\\s+", " ").split(" ")) );
+        Set<String> bset = new HashSet<>(Arrays.asList(
+                b.trim().replaceAll("\\s+", " ").split(" ")) );
         
         aset.addAll(bset);
         
@@ -37,8 +39,10 @@ public class StringHelper {
         if (a == null || a.isBlank()) {
             return b == null || b.isBlank();
         }
-        Set<String> aset = new HashSet<>(Arrays.asList(a.split(" ")));
-        Set<String> bset = new HashSet<>(Arrays.asList(b.split(" ")));
+        Set<String> aset = new HashSet<>(Arrays.asList(
+                a.trim().replaceAll("\\s+", " ").split(" ")) );
+        Set<String> bset = new HashSet<>(Arrays.asList(
+                b.trim().replaceAll("\\s+", " ").split(" ")) );
 
         return aset.size() == bset.size() && aset.containsAll(bset);
     }

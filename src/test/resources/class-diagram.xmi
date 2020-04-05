@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<XMI verified="false" xmlns:UML="http://schema.omg.org/spec/UML/1.4" timestamp="2020-04-05T11:21:58" xmi.version="1.2">
+<XMI verified="false" xmlns:UML="http://schema.omg.org/spec/UML/1.4" timestamp="2020-04-05T11:48:20" xmi.version="1.2">
  <XMI.header>
   <XMI.documentation>
    <XMI.exporter>umbrello uml modeller http://umbrello.kde.org</XMI.exporter>
@@ -55,17 +55,17 @@
       <UML:Class isSpecification="false" isLeaf="false" namespace="Logical_View" comment="{skipServer}" xmi.id="uGjsIP0WCgyHI" name="User" isRoot="false" isAbstract="false" visibility="public"/>
       <UML:Class isSpecification="false" isLeaf="false" namespace="Logical_View" comment="{skipClient infinite-scroll}" xmi.id="uiuiXRnEHN4xr" name="Contact" isRoot="false" isAbstract="false" visibility="public">
        <UML:Classifier.feature>
-        <UML:Attribute isSpecification="false" comment="{unidirectional}" xmi.id="u80tvPb14GPSE" type="uGjsIP0WCgyHI" name="user" visibility="public"/>
+        <UML:Attribute isSpecification="false" comment="{unidirectional with jpaDerivedIdentifier}" xmi.id="u80tvPb14GPSE" type="uGjsIP0WCgyHI" name="user" visibility="public"/>
         <UML:Attribute isSpecification="false" xmi.id="uzXaWtRrypDMC" type="uYJbgN0jKcJkq" name="address" visibility="public"/>
         <UML:Attribute isSpecification="false" comment="{display}" xmi.id="uVAQmpQJflNUZ" type="unrvMcY6Y55xE" name="name" visibility="public"/>
-        <UML:Attribute isSpecification="false" xmi.id="uZmgjAwZMEpsZ" type="uwEg80LAkuDxK" name="age" visibility="public"/>
+        <UML:Attribute isSpecification="false" comment="{min(1) max(110)}" xmi.id="uZmgjAwZMEpsZ" type="uwEg80LAkuDxK" name="age" visibility="public"/>
         <UML:Attribute isSpecification="false" xmi.id="uxVSLvguIbVNy" type="ubEJRce0vqIHp" name="status" visibility="public"/>
         <UML:Attribute isSpecification="false" xmi.id="uCfu6tMpXyh23" type="unrvMcY6Y55xE" name="spouseName" visibility="private"/>
        </UML:Classifier.feature>
       </UML:Class>
       <UML:Class isSpecification="false" isLeaf="false" namespace="Logical_View" comment="{filter pagination}" xmi.id="uYJbgN0jKcJkq" name="Address" isRoot="false" isAbstract="false" visibility="public">
        <UML:Classifier.feature>
-        <UML:Attribute isSpecification="false" xmi.id="ukH7f3x6Oo0YI" type="unrvMcY6Y55xE" name="email" visibility="public"/>
+        <UML:Attribute isSpecification="false" comment="{display}" xmi.id="ukH7f3x6Oo0YI" type="unrvMcY6Y55xE" name="email" visibility="public"/>
        </UML:Classifier.feature>
       </UML:Class>
       <UML:Enumeration isSpecification="false" isLeaf="false" namespace="Logical_View" xmi.id="ubEJRce0vqIHp" stereotype="enum" name="Status" isRoot="false" isAbstract="false" visibility="public">
@@ -79,10 +79,10 @@
       <diagrams resolution="96">
        <diagram showops="1" type="1" showpubliconly="0" fillcolor="#ffff00" showgrid="0" zoom="156" xmi.id="udc4FJWcILFam" showopsig="1" snapcsgrid="0" showpackage="1" documentation="" griddotcolor="#d3d3d3" showscope="1" snapx="25" backgroundcolor="#ffffff" snapy="25" showatts="1" usefillcolor="1" linewidth="0" canvasheight="195" canvaswidth="468" isopen="1" linecolor="#ff0000" name="class diagram" textcolor="#000000" showattsig="1" localid="-1" snapgrid="0" showattribassocs="1" font="Noto Sans,8,-1,5,50,0,0,0,0,0,Regular" showstereotype="1">
         <widgets>
+         <enumwidget fillcolor="#ffff00" width="58" xmi.id="ubEJRce0vqIHp" autoresize="1" usesdiagramfillcolor="0" showpackage="1" usefillcolor="1" linewidth="0" x="-584" y="-638" linecolor="#ff0000" textcolor="#000000" isinstance="0" height="60" localid="uJz2BOhcWZPgI" usesdiagramusefillcolor="0" font="Noto Sans,8,-1,5,50,0,0,0,0,0,Regular" showstereotype="1"/>
          <classwidget showpubliconly="0" fillcolor="#ffff00" showoperations="1" width="87" xmi.id="uYJbgN0jKcJkq" showattsigs="601" autoresize="1" usesdiagramfillcolor="0" showpackage="1" showscope="1" usefillcolor="1" linewidth="0" x="-994" y="-630" showattributes="1" showopsigs="601" linecolor="#ff0000" textcolor="#000000" isinstance="0" height="37" localid="uQWm5v3wj1G9T" usesdiagramusefillcolor="0" font="Noto Sans,8,-1,5,50,0,0,0,0,0,Regular" showstereotype="1"/>
          <classwidget showpubliconly="0" fillcolor="#ffff00" showoperations="1" width="36" xmi.id="uGjsIP0WCgyHI" showattsigs="601" autoresize="0" usesdiagramfillcolor="0" showpackage="1" showscope="1" usefillcolor="1" linewidth="0" x="-766" y="-475" showattributes="1" showopsigs="601" linecolor="#ff0000" textcolor="#000000" isinstance="0" height="32" localid="u6KXCYDFDwIj7" usesdiagramusefillcolor="0" font="Noto Sans,8,-1,5,50,0,0,0,0,0,Regular" showstereotype="1"/>
          <classwidget showpubliconly="0" fillcolor="#ffff00" showoperations="1" width="124" xmi.id="uiuiXRnEHN4xr" showattsigs="601" autoresize="1" usesdiagramfillcolor="0" showpackage="1" showscope="1" usefillcolor="1" linewidth="0" x="-809" y="-638" showattributes="1" showopsigs="601" linecolor="#ff0000" textcolor="#000000" isinstance="0" height="112" localid="uImByCPLHiIPx" usesdiagramusefillcolor="0" font="Noto Sans,8,-1,5,50,0,0,0,0,0,Regular" showstereotype="1"/>
-         <enumwidget fillcolor="#ffff00" width="58" xmi.id="ubEJRce0vqIHp" autoresize="1" usesdiagramfillcolor="0" showpackage="1" usefillcolor="1" linewidth="0" x="-584" y="-638" linecolor="#ff0000" textcolor="#000000" isinstance="0" height="60" localid="uJz2BOhcWZPgI" usesdiagramusefillcolor="0" font="Noto Sans,8,-1,5,50,0,0,0,0,0,Regular" showstereotype="1"/>
         </widgets>
         <messages/>
         <associations>

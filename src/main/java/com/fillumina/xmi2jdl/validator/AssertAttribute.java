@@ -23,15 +23,16 @@ public class AssertAttribute extends AbstractAssertor<AssertAttribute> {
                     entity.getFieldByName(attributeName).get());
         }
     }
+    
+    public AssertAttribute assertValidation(String validation) {
+        return assertEqualTokens("validation", validation, 
+                attribute.getValidation());
+    }
 
     public AssertAttribute assertType(String type) {
         return assertEquals("type", type, attribute.getDataType().getName());
     }
     
-    public AssertAttribute assertValidation(String validation) {
-        return assertEquals("validation", validation, attribute.getValidation());
-    }
-
     public AssertAttribute isDisplay() {
         return assertDisplay(true);
     }

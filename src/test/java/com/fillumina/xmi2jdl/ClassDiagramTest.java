@@ -10,8 +10,8 @@ public class ClassDiagramTest extends AbstractTest {
     private static final String FILENAME = "class-diagram.xmi";
 
     public ClassDiagramTest() {
-//        super(FILENAME, false, System.out);
-        super(FILENAME, true, null);
+        super(FILENAME, true, System.out);
+//        super(FILENAME, true, null);
     }
     
     @Override
@@ -38,7 +38,8 @@ public class ClassDiagramTest extends AbstractTest {
                 .assertTarget("User")
                 .assertType(RelationshipType.OneToOne)
                 .isUnidirectional()
-                .isRequired();
+                .isRequired()
+                .assertValidation("with jpaDerivedIdentifier");
 
         assertRelationship("Contact", "address")
                 .assertTarget("Address")
@@ -52,10 +53,15 @@ public class ClassDiagramTest extends AbstractTest {
 
         assertAttribute("Contact", "age")
                 .assertType("Integer")
-                .isNotDisplay();
+                .isNotDisplay()
+                .assertValidation("max(110) min(1)");
         
         assertAttribute("Contact", "status")
                 .assertType("Status");
+        
+        assertAttribute("Address", "email")
+                .assertType("String")
+                .isDisplay();
         
         assertEnumValues("Status", "MARRIED", "FREE");
         

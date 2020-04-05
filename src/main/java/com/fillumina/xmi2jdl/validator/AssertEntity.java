@@ -16,7 +16,7 @@ public class AssertEntity extends AbstractAssertor<AssertEntity> {
         super(validator, "entity " + entityName);
         
         Optional<Entity> entOpt = validator.findEntityByName(entityName);
-        this.entity = testValidIfNotNull("entity " + entityName, entOpt.get());
+        this.entity = testValidIfNotNull("", entOpt.get());
     }
 
     public AssertEntity isPagination() {
