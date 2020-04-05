@@ -1,6 +1,5 @@
 package com.fillumina.xmi2jdl.validator;
 
-import com.fillumina.xmi2jdl.util.AppendableWrapper;
 import com.fillumina.xmi2jdl.DataType;
 import com.fillumina.xmi2jdl.DataTypeRef;
 import com.fillumina.xmi2jdl.Entity;
@@ -10,6 +9,7 @@ import com.fillumina.xmi2jdl.Enumeration;
 import com.fillumina.xmi2jdl.Enumeration.Literal;
 import com.fillumina.xmi2jdl.Relationship;
 import com.fillumina.xmi2jdl.RelationshipType;
+import com.fillumina.xmi2jdl.util.AppendableWrapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -96,7 +96,7 @@ public abstract class AbstractValidator extends Tester
             return opt.get().getAllRelationships().stream()
                     .filter(r -> Objects.equals(relationshipName, r.getName()))
                     .findFirst()
-                    .get();
+                    .orElse(null);
         }
         error("relationship for entity " + entityName +
                 " relationship " + relationshipName + " not found");
@@ -112,14 +112,6 @@ public abstract class AbstractValidator extends Tester
         test("entity " + entityName + " not present", () -> {
             if (findEntityByName(entityName).isPresent()) {
                 error("entity " + entityName + " found");
-            }
-        });
-    }
-    
-    protected void assertEntityPresent(String entityName) {
-        test("entity " + entityName + " present", () -> {
-            if (findEntityByName(entityName).isEmpty()) {
-                error("entity " + entityName + " not found");
             }
         });
     }
@@ -196,8 +188,20 @@ public abstract class AbstractValidator extends Tester
                 .forEach(e -> log(e.getName()));
     }
         
-    protected void allConnectedEntitiesMustHaveRelationNamedTheSame() {
+    protected void checkRequiredRelationshipsWithItself() {   
+        test("required relationships with itself are forbidden", () -> {
+            entities.values().forEach(e -> 
+                e.getOwnedRelationships().forEach(r -> {
+                    if (Objects.equals(r.getOwner(), r.getTarget()) &&
+                            r.isRequired()) {
+                        error("Entity " + r.getOwner().getName() + 
+                                " has required relationship with iteself");
+                    }
+                }));
+        });
+    }
         
+    protected void allConnectedEntitiesMustHaveRelationNamedTheSame() {        
         entities.values().forEach(e -> {
             String entityName = e.getName();
             String fieldName = "" + Character.toLowerCase(entityName.charAt(0)) +

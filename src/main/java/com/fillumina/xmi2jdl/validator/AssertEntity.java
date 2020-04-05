@@ -28,7 +28,7 @@ public class AssertEntity extends AbstractAssertor<AssertEntity> {
     }
 
     public AssertEntity assertPagination(Pagination pagination) {
-        return assertEquals("pagination", pagination, entity.getPagination());
+        return assertEquals("pagination", pagination, () -> entity.getPagination());
     }
     
     public AssertEntity isFilter() {
@@ -40,7 +40,7 @@ public class AssertEntity extends AbstractAssertor<AssertEntity> {
     }
     
     public AssertEntity assertFilter(boolean filter) {
-        return assertEquals("filter", filter, entity.isFilter());
+        return assertEquals("filter", filter, () -> entity.isFilter());
     }
     
     public AssertEntity isSkipClient() {
@@ -52,7 +52,7 @@ public class AssertEntity extends AbstractAssertor<AssertEntity> {
     }
     
     public AssertEntity assertSkipClient(boolean skipClient) {
-        return assertEquals("skipClient", skipClient, entity.isSkipClient());
+        return assertEquals("skipClient", skipClient, () -> entity.isSkipClient());
     }
 
     public AssertEntity isSkipServer() {
@@ -64,6 +64,6 @@ public class AssertEntity extends AbstractAssertor<AssertEntity> {
     }
     
     public AssertEntity assertSkipServer(boolean skipServer) {
-        return assertEquals("skipServer", skipServer, entity.isSkipServer());
+        return assertEquals("skipServer", skipServer, () -> entity.isSkipServer());
     }
 }

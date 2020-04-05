@@ -26,11 +26,11 @@ public class AssertAttribute extends AbstractAssertor<AssertAttribute> {
     
     public AssertAttribute assertValidation(String validation) {
         return assertEqualTokens("validation", validation, 
-                attribute.getValidation());
+                () -> attribute.getValidation());
     }
 
     public AssertAttribute assertType(String type) {
-        return assertEquals("type", type, attribute.getDataType().getName());
+        return assertEquals("type", type, () -> attribute.getDataType().getName());
     }
     
     public AssertAttribute isDisplay() {
@@ -42,6 +42,6 @@ public class AssertAttribute extends AbstractAssertor<AssertAttribute> {
     }
     
     public AssertAttribute assertDisplay(boolean display) {
-        return assertEquals("display", display, attribute.isDisplay());
+        return assertEquals("display", display, () -> attribute.isDisplay());
     }
 }

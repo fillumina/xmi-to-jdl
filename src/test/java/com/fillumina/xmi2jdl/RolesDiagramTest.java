@@ -16,7 +16,8 @@ public class RolesDiagramTest extends AbstractTest {
     
     @Override
     public void createTests() {
-        
+        checkRequiredRelationshipsWithItself();
+                
         assertRelationship("One", "oneToOne")
                 .assertTarget("One")
                 .assertType(RelationshipType.OneToOne)
@@ -66,11 +67,6 @@ public class RolesDiagramTest extends AbstractTest {
                 .assertType(RelationshipType.OneToOne)
                 .isRequired();
 
-        assertRelationship("OneReq", "oneReqToOneReq")
-                .assertTarget("OneReq")
-                .assertType(RelationshipType.OneToOne)
-                .isRequired();
-
         assertRelationship("OneReq", "oneReqToMany")
                 .assertTarget("Many")
                 .assertType(RelationshipType.OneToMany)
@@ -95,11 +91,6 @@ public class RolesDiagramTest extends AbstractTest {
 
         assertRelationship("ManyReq", "manyReqToMany")
                 .assertTarget("Many")
-                .assertType(RelationshipType.ManyToMany)
-                .isRequired();
-
-        assertRelationship("ManyReq", "manyReqToManyReq")
-                .assertTarget("ManyReq")
                 .assertType(RelationshipType.ManyToMany)
                 .isRequired();
 

@@ -10,8 +10,8 @@ public class ClassDiagramTest extends AbstractTest {
     private static final String FILENAME = "class-diagram.xmi";
 
     public ClassDiagramTest() {
-        super(FILENAME, true, System.out);
-//        super(FILENAME, true, null);
+//        super(FILENAME, true, System.out);
+        super(FILENAME, true, null);
     }
     
     @Override
@@ -19,9 +19,6 @@ public class ClassDiagramTest extends AbstractTest {
         allEntitisMustHaveADisplayFieldExcept();
         noCircularOneToOneWithMapIdRelationships();
         checkAllNamesFirstCharLowerCaseAndMaxLength();
-
-        // JHipster provides its own User
-        assertEntityPresent("User");
 
         assertEntity("Address")
                 .isFilter()

@@ -19,7 +19,7 @@ public class AssertRelationship extends AbstractAssertor<AssertRelationship> {
     }
 
     public AssertRelationship assertType(RelationshipType type) {
-        return assertEquals("type", type, relationship.getRelationshipType());
+        return assertEquals("type", type, () -> relationship.getRelationshipType());
     }
     
     public AssertRelationship isUnidirectional() {
@@ -32,16 +32,17 @@ public class AssertRelationship extends AbstractAssertor<AssertRelationship> {
     
     public AssertRelationship assertUnidirectional(boolean unidirectional) {
         return assertEquals("unidirectional", unidirectional, 
-                relationship.isUnidirectional());
+                () -> relationship.isUnidirectional());
     }
     
     public AssertRelationship assertValidation(String validation) {
         return assertEqualTokens("validation", validation, 
-                relationship.getValidation());
+                () -> relationship.getValidation());
     }
     
     public AssertRelationship assertTarget(String target) {
-        return assertEquals("target", target, relationship.getTarget().getName());
+        return assertEquals("target", target, 
+                () -> relationship.getTarget().getName());
     }
 
     public AssertRelationship isRequired() {
@@ -53,7 +54,8 @@ public class AssertRelationship extends AbstractAssertor<AssertRelationship> {
     }
     
     private AssertRelationship assertRequired(boolean required) {
-        return assertEquals("required", required, relationship.isRequired());
+        return assertEquals("required", required, 
+                () -> relationship.isRequired());
     }
     
 }

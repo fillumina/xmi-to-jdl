@@ -2,6 +2,7 @@ package com.fillumina.xmi2jdl.validator;
 
 import com.fillumina.xmi2jdl.util.StringHelper;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  *
@@ -34,21 +35,24 @@ public class AbstractAssertor<T extends AbstractAssertor<?>> {
         }
     }
     
-    public T assertEquals(String what, Object shouldBe, Object is) {
+    public <V> T assertEquals(String what, V shouldBe, Supplier<V> is) {
         test(msg + " " + what, () -> {
-            if (!Objects.equals(shouldBe, is)) {
+            V value = is.get();
+            if (!Objects.equals(shouldBe, value)) {
                 validator.error(msg + " expected " + what + " be " + shouldBe + 
-                        " was " + is);
+                        " was " + value);
             }
         });
         return (T) this;
     }
     
-    public T assertEqualTokens(String what, String shouldBe, String is) {
+    public T assertEqualTokens(String what, String shouldBe, 
+            Supplier<String> is) {
         test(msg + " " + what, () -> {
-            if (!StringHelper.equalTokens(shouldBe, is)) {
+            String value = is.get();
+            if (!StringHelper.equalTokens(shouldBe, value)) {
                 validator.error(msg + " expected " + what + " be " + shouldBe + 
-                        " was " + is);
+                        " was " + value);
             }
         });
         return (T) this;
