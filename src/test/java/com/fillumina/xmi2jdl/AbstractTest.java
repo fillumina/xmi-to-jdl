@@ -20,17 +20,20 @@ public abstract class AbstractTest extends AbstractValidator {
                 .exec(new JdlProducer(out))
                 .exec(this);
 
-        // tests are executed twice: once for the output, then by junit
+        // tests are executed twice: for the output and by junit
         
         setVerbose(false);
         setThrowAssertionError(false);
         setAppendable(out);
         
+        // output
         executeTests();
 
         setVerbose(true);
         setThrowAssertionError(true);
         setAppendable(null);
+        
+        // junit...
     }
 
     @TestFactory
