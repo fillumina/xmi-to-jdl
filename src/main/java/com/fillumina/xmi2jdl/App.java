@@ -4,6 +4,7 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
+// TODO update this help
 /**
  * Reads an XMI file exported by <a href='https://umbrello.kde.org/'>Umbrello</a>
  * and produces a 
@@ -74,6 +75,7 @@ import org.xml.sax.SAXException;
  */
 public class App {
 
+    // TODO parses options (private honour and output file)
     public static void main(String[] args) throws IOException, SAXException,
             ParserConfigurationException {
         var filename = args[0];

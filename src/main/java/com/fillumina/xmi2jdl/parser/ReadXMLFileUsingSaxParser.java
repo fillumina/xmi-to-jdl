@@ -1,5 +1,6 @@
 package com.fillumina.xmi2jdl.parser;
 
+import com.fillumina.xmi2jdl.util.StringHelper;
 import com.fillumina.xmi2jdl.DataType;
 import com.fillumina.xmi2jdl.Entity;
 import com.fillumina.xmi2jdl.EntityDiagram;
@@ -196,7 +197,7 @@ public class ReadXMLFileUsingSaxParser
                         String type = Multiplicity.getRelationAsString(
                                 parsedRelationship.getOwnerMultiplicity(),
                                 parsedRelationship.getTargetMultiplicity());
-                        String val = StringHelper.merge(type, validation);
+                        String val = StringHelper.mergeTokens(type, validation);
                         attr.setComment("{" + val + "} " + 
                                 StringHelper.toString(cp.getComment()) );
                     }

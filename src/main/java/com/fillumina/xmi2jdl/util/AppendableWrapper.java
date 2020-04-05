@@ -1,4 +1,4 @@
-package com.fillumina.xmi2jdl;
+package com.fillumina.xmi2jdl.util;
 
 import java.io.IOException;
 import java.util.Objects;

@@ -1,6 +1,6 @@
 package com.fillumina.xmi2jdl.validator;
 
-import com.fillumina.xmi2jdl.AppendableWrapper;
+import com.fillumina.xmi2jdl.util.AppendableWrapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public abstract class DiagramTester {
+public abstract class Tester {
     
     public static class DiagramTest {
         private final String name;
@@ -41,11 +41,11 @@ public abstract class DiagramTester {
     private boolean error;
     private int errorCounter;
 
-    public DiagramTester(AppendableWrapper appendableWrapper) {
+    public Tester(AppendableWrapper appendableWrapper) {
         this.out = appendableWrapper;
     }
 
-    public DiagramTester(Appendable appendable) {
+    public Tester(Appendable appendable) {
         this.out = new AppendableWrapper(appendable);
     }
 

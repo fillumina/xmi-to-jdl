@@ -1,6 +1,6 @@
 package com.fillumina.xmi2jdl.validator;
 
-import com.fillumina.xmi2jdl.AppendableWrapper;
+import com.fillumina.xmi2jdl.util.AppendableWrapper;
 import com.fillumina.xmi2jdl.DataType;
 import com.fillumina.xmi2jdl.DataTypeRef;
 import com.fillumina.xmi2jdl.Entity;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public abstract class AbstractValidator extends DiagramTester 
+public abstract class AbstractValidator extends Tester 
         implements EntityDiagramConsumer {
 
     protected Map<String, DataType> dataTypes;
@@ -183,6 +183,10 @@ public abstract class AbstractValidator extends DiagramTester
         entities.values().stream()
             .filter(e -> !e.getFieldByName(fieldName).isEmpty())
             .forEach(e -> log("Entity", e.getName()));
+    }
+    
+    protected AssertEntity assertEntity(String entityName) {
+        return new AssertEntity(this, entityName);
     }
     
     protected void showAllEntitiesConnectedTo(String entityName) {

@@ -1,5 +1,6 @@
 package com.fillumina.xmi2jdl;
 
+import com.fillumina.xmi2jdl.util.AppendableWrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

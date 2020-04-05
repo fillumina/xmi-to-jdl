@@ -1,5 +1,7 @@
 package com.fillumina.xmi2jdl;
 
+import com.fillumina.xmi2jdl.util.AppendableWrapper;
+
 /**
  *
  * @author Francesco Illuminati <fillumina@gmail.com>

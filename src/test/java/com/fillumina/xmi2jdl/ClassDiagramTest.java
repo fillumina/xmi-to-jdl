@@ -10,7 +10,7 @@ public class ClassDiagramTest extends AbstractTest {
     private static final String FILENAME = "class-diagram.xmi";
 
     public ClassDiagramTest() {
-//        super(FILENAME, System.out, false);
+//        super(FILENAME, System.out, true);
         super(FILENAME, null, true);
     }
     
