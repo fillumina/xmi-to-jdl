@@ -12,7 +12,7 @@ import org.junit.jupiter.api.TestFactory;
  */
 public abstract class AbstractTest extends AbstractValidator {
     
-    public AbstractTest(String filename, Appendable out, boolean honourPrivate) {
+    public AbstractTest(String filename, boolean honourPrivate, Appendable out) {
         InputStream inputStream = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream(filename);
         

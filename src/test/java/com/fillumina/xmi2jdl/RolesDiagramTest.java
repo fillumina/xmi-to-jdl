@@ -10,8 +10,8 @@ public class RolesDiagramTest extends AbstractTest {
     private static final String FILENAME = "roles-class-diagram.xmi";
 
     public RolesDiagramTest() {
-//        super(FILENAME, System.out, false);
-        super(FILENAME, null, false);
+//        super(FILENAME, false, System.out);
+        super(FILENAME, false, null);
     }
     
     @Override
