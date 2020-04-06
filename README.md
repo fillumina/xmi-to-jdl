@@ -37,7 +37,7 @@ JDL file which is very useful in case of big and complex projects with many
 entities and relationships.
 
 *REMEMBER*: always set the code to 'Java' in Umbrello so that the data types are
-set accordingly and you will not found a String entity when you use it
+set accordingly and you will not find a String entity when you use it
 in one of your attributes (Umbrello defaults to C++).
 
 ## Entities
