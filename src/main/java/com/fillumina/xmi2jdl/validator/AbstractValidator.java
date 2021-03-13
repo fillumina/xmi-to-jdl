@@ -187,7 +187,7 @@ public abstract class AbstractValidator extends Tester
         findAllEntitiesConnectedTo(entityName).stream()
                 .forEach(e -> log(e.getName()));
     }
-        
+    
     protected void checkRequiredRelationshipsWithItself() {   
         test("required relationships with itself are forbidden", () -> {
             entities.values().forEach(e -> 

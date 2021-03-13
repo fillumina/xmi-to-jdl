@@ -81,7 +81,7 @@ any validation valid for the field type:
  . blobs:  `minbytes(100)`, `maxbytes(2000)`
 
 
-#### Molteplicity
+#### Multiplicity
 One of:
 
  . `ManyToOne` (default if omitted)
@@ -104,8 +104,10 @@ KEY=VALUE
 There are no quotes and the first `=` separates key and value.
 
 These are some useful substitutions:
+
 ```
 EMAIL_PATTERN=^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
+
 SIX_ALPHA=[a-zA-z]{7}
 ```
 
@@ -119,7 +121,7 @@ MINLENGTH = 20
 ## Test
 
 The complete graph is available for testing to validate
-it and can eventually be changed before producing the JDL.
+it and can eventually be changed before producing the actual JDL.
 This must be done programmatically by adding specific code. There is
 a kind of pluggable way of doing this. Testing a graph is 
 a very good way to avoid mistakes in case of complex projects with many
