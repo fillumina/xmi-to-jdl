@@ -5,6 +5,8 @@ Reads a Class Diagram XMI 1.2 file exported by
 and possibly other compatible products and produces
 a [JHipster](https://www.jhipster.tech/jdl/) JDL output.
 
+[![build](https://github.com/fillumina/xmi-to-jdl/actions/workflows/build.yml/badge.svg)](https://github.com/fillumina/xmi-to-jdl/actions/workflows/build.yml)
+
 ![Class Diagram](class-diagram.png)
 
 ## Build and run
