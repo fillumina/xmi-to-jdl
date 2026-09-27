@@ -7,6 +7,58 @@ a [JHipster](https://www.jhipster.tech/jdl/) JDL output.
 
 ![Class Diagram](class-diagram.png)
 
+## Build and run
+
+Needs a JDK 11 or later and Maven; the build itself targets Java 11.
+
+```
+mvn clean verify
+```
+
+That runs the tests and leaves two jars in `target`: the plain one and
+a runnable shaded one that carries its dependencies.
+
+```
+java -jar target/xmi-to-jdl-2.1-shaded.jar diagram.xmi > diagram.jdl
+```
+
+Arguments:
+
+1. `filename` - the XMI file to parse, required
+2. `private` - `true` to skip private fields, `false` to keep them, 
+default `false`
+
+The JDL goes to the standard output, so redirect it to a file. Running 
+with no arguments prints the usage.
+
+## JHipster compatibility
+
+Checked on 2026-09-27 against JHipster 9.4.0, by importing the JDL built 
+from the test diagrams with JHipster's own importer.
+
+The JHipster 6 and 7 ways of writing these are translated, so a model 
+designed for them still produces an importable file:
+
+ . a `{display}` marker is consumed and the display field is written 
+inside the braces, `Address{email(email)}`; the trailing ` display` 
+option JHipster 9 rejects is never written
+ . `with jpaDerivedIdentifier` is dropped, the relationship is written as 
+a plain one to one and the dropped option is reported in the `// ERRORS` 
+section of the JDL
+ . a relationship pointing at an entity JHipster provides, `User` or 
+`Authority`, is marked `with builtInEntity`, as JHipster 9 requires
+
+Every diagram in the tests is checked on every build. To run the same 
+check with the real JHipster parser, install it once and point the test 
+at it:
+
+```
+npm install generator-jhipster
+mvn test -Djdl.parser.dir=../node_modules
+```
+
+Without that property the parser test is skipped and the rest still run.
+
 ## Versions
 
  . *2.0* 5/4/2020 uses class diagram relationships together with those defined 
@@ -91,6 +143,8 @@ One of:
  . `ManyToMany`
 
  . `OneToOne` eventually followed by <code>with jpaDerivedIdentifier</code>
+(JHipster 6 and 7 syntax: JHipster 9 dropped it, so it is removed from
+the JDL and reported in the `// ERRORS` section, see above)
 
 eventually with `unidirectional` added to each of them;
 
@@ -126,3 +180,10 @@ This must be done programmatically by adding specific code. There is
 a kind of pluggable way of doing this. Testing a graph is 
 a very good way to avoid mistakes in case of complex projects with many
 entities and relationships.
+
+The test diagrams under `src/test/resources` are the ones the checks
+above run on, so they are worth keeping valid.
+
+## License
+
+Apache License 2.0, see [LICENSE](LICENSE).

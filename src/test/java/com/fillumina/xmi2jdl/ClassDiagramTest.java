@@ -31,12 +31,16 @@ public class ClassDiagramTest extends AbstractTest {
         assertEntity("User")
                 .isSkipServer();
         
+        // the derived identifier marker is JHipster 6 and 7 syntax: it is
+        // kept as a flag and never written to the JDL, which JHipster 9
+        // would reject
         assertRelationship("Contact", "user")
                 .assertTarget("User")
                 .assertType(RelationshipType.OneToOne)
                 .isUnidirectional()
                 .isRequired()
-                .assertValidation("with jpaDerivedIdentifier");
+                .isMapId()
+                .assertValidation("");
 
         assertRelationship("Contact", "address")
                 .assertTarget("Address")

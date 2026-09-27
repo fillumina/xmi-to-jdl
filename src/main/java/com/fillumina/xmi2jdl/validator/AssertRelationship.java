@@ -35,6 +35,19 @@ public class AssertRelationship extends AbstractAssertor<AssertRelationship> {
                 () -> relationship.isUnidirectional());
     }
     
+    public AssertRelationship isMapId() {
+        return assertMapId(true);
+    }
+
+    public AssertRelationship isNotMapId() {
+        return assertMapId(false);
+    }
+
+    private AssertRelationship assertMapId(boolean mapId) {
+        return assertEquals("mapId", mapId,
+                () -> relationship.isMapId());
+    }
+
     public AssertRelationship assertValidation(String validation) {
         return assertEqualTokens("validation", validation, 
                 () -> relationship.getValidation());

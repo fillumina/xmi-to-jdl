@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,19 @@ import java.util.stream.Collectors;
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class Entity implements Comparable<Entity> {
+
+    /** Entities JHipster generates itself, they are never declared in the JDL. */
+    private static final Set<String> PROVIDED_BY_JHIPSTER = Set.of("User", "Authority");
+
+    /**
+     * @param name the name of an entity
+     * @return whether JHipster provides the entity itself, so that it must not
+     *         be declared in the JDL and the relationships pointing at it must
+     *         be marked with the builtInEntity option
+     */
+    public static boolean isProvidedByJHipster(String name) {
+        return PROVIDED_BY_JHIPSTER.contains(name);
+    }
 
     private final String name;
     private final String id;
@@ -100,7 +114,7 @@ public class Entity implements Comparable<Entity> {
     
     public void appendEntity(Appendable appendable)  {
         // User & Authority are provided by JHipster
-        if ("User".equals(name) || "Authority".equals(name)) {
+        if (isProvidedByJHipster(name)) {
             return;
         }
 
@@ -141,7 +155,7 @@ public class Entity implements Comparable<Entity> {
     
     public void appendRelationship(RelationshipType rel , Appendable appendable) {
         // User & Authority are provided by JHipster
-        if ("User".equals(name) || "Authority".equals(name)) {
+        if (isProvidedByJHipster(name)) {
             return;
         }
 
@@ -159,7 +173,7 @@ public class Entity implements Comparable<Entity> {
 
     public boolean hasRelationships(RelationshipType rel) {
         // User & Authority are provided by JHipster
-        if ("User".equals(name) || "Authority".equals(name)) {
+        if (isProvidedByJHipster(name)) {
             return false;
         }
 
@@ -169,7 +183,7 @@ public class Entity implements Comparable<Entity> {
 
     private boolean hasDataTypeAttributes() {
         // User & Authority are provided by JHipster
-        if ("User".equals(name) || "Authority".equals(name)) {
+        if (isProvidedByJHipster(name)) {
             return false;
         }
 
@@ -178,9 +192,7 @@ public class Entity implements Comparable<Entity> {
 
     public List<Entity> getMapIdConnectedEntityList() {
         return ownedRelationships.stream()
-                .filter(r -> r.getOwner() == this && 
-                        r.getValidation() != null &&
-                        r.getValidation().contains("with jpaDerivedIdentifier"))
+                .filter(r -> r.getOwner() == this && r.isMapId())
                 .map(r -> r.getTarget())
                 .collect(Collectors.toList());
     }

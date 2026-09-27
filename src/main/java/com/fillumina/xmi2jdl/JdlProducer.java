@@ -4,6 +4,7 @@ import com.fillumina.xmi2jdl.util.AppendableWrapper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ public class JdlProducer implements EntityDiagramConsumer {
         buf.writeln("// ", entities.size(), " ENTITIES ").writeln();
         List<Entity> entitySortedList = sort(entities.values());
         entitySortedList.forEach(e -> e.appendEntity(buf.getAppendable()) );
+        collectMapIdErrors(entitySortedList, errors);
 
         buf.writeln("// RELATIONSHIPS").writeln();
         for (RelationshipType relationship : RelationshipType.values()) {
@@ -59,9 +61,27 @@ public class JdlProducer implements EntityDiagramConsumer {
 
         buf.writeln().writeln("// ERRORS").writeln();
 
-        errors.forEach(e -> buf.writeln(e));
+        errors.forEach(e -> buf.writeln("// ", e));
     }
         
+    /**
+     * Records the relationships whose JHipster 6 and 7 derived identifier
+     * option could not be translated: JHipster 9 does not accept it, so the
+     * relationship is written as a plain one to one and the user is told
+     * about it in the ERRORS section of the JDL.
+     */
+    private void collectMapIdErrors(List<Entity> entities, List<String> errors) {
+        var messages = new LinkedHashSet<String>();
+        entities.forEach(e -> e.getAllRelationships().stream()
+                .filter(Relationship::isMapId)
+                .forEach(r -> messages.add(
+                        r.getOwner().getName() + "{" + r.getAttributeName() + "} to "
+                                + r.getTarget().getName()
+                                + ": 'with jpaDerivedIdentifier' is not supported by"
+                                + " JHipster 9 and has been dropped")));
+        errors.addAll(messages);
+    }
+
     private <T extends Comparable<T>> List<T> sort(Collection<T> coll) {
         List<T> list = new ArrayList<>(coll);
         Collections.sort(list);

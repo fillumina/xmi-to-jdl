@@ -8,6 +8,10 @@ import com.fillumina.xmi2jdl.util.AppendableWrapper;
  */
 public class Relationship extends Reference implements Comparable<Relationship> {
 
+    private static final String JPA_DERIVED_IDENTIFIER = "jpaDerivedIdentifier";
+    private static final String MAP_ID_OPTION = "with " + JPA_DERIVED_IDENTIFIER;
+    private static final String DISPLAY = "display";
+
     private final Entity owner;
     private final Entity target;
     private final String attributeName;
@@ -16,6 +20,7 @@ public class Relationship extends Reference implements Comparable<Relationship> 
     private final boolean required;
     private final boolean unidirectional;
     private final boolean invertedOneToMany;
+    private final boolean mapId;
 
     public Relationship(Entity owner,
             Entity target,
@@ -33,6 +38,7 @@ public class Relationship extends Reference implements Comparable<Relationship> 
             this.target = owner;
             this.invertedOneToMany = true;
             this.required = false;
+            this.mapId = false;
         } else {
             String v = validation;
             RelationshipType rel = null;
@@ -66,6 +72,20 @@ public class Relationship extends Reference implements Comparable<Relationship> 
             } else {
                 this.required = false;
             }
+            // Both markers below are JHipster 6 and 7 syntax. JHipster 9
+            // writes the display field inside the braces, see append(),
+            // and dropped the derived identifier option altogether, so
+            // they are consumed here and never passed through to the JDL.
+            this.mapId = v.contains(JPA_DERIVED_IDENTIFIER);
+            if (this.mapId) {
+                // the comment may hold any number of spaces after the 'with',
+                // so the option is removed by name and a left over, dangling
+                // 'with' keyword is dropped afterwards
+                v = v.replace(MAP_ID_OPTION, "")
+                        .replace(JPA_DERIVED_IDENTIFIER, "")
+                        .replaceAll("\\s*\\bwith\\b\\s*$", "");
+            }
+            v = v.replace(DISPLAY, "");
             this.validation = v.trim();
         }
     }
@@ -98,6 +118,14 @@ public class Relationship extends Reference implements Comparable<Relationship> 
     public boolean isRequired() {
         return required;
     }
+
+    /**
+     * @return whether the relationship was marked with the JHipster 6 and 7
+     *         {@code with jpaDerivedIdentifier} option
+     */
+    public boolean isMapId() {
+        return mapId;
+    }
     
     @Override
     public void append(Appendable appendable) {
@@ -119,11 +147,19 @@ public class Relationship extends Reference implements Comparable<Relationship> 
         buf.ifTrue(required).write(" required");
         buf.write("} to ", target.getName());
 
-        if (!unidirectional && !relationship.equals(RelationshipType.ManyToOne)) {
+        // an entity provided by JHipster is not declared, so it has no
+        // field to name on the other side of the relationship
+        boolean targetIsProvided = Entity.isProvidedByJHipster(target.getName());
+        if (!targetIsProvided
+                && !unidirectional
+                && !relationship.equals(RelationshipType.ManyToOne)) {
             buf.write("{", targetAttr);
             buf.ifNotNull(owner.getDisplayField())
                     .write("(", owner.getDisplayField(), ")");
             buf.write("}");
+        }
+        if (targetIsProvided) {
+            buf.write(" with builtInEntity");
         }
 
         buf.ifNotNull(validation).write(" ", validation);
